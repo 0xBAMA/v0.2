@@ -1,55 +1,76 @@
 #include "../voraldo/V2.h"
 
-Block::Block(int x,int y,int z){
+Block::Block(){
+	data = NULL; //call Block::init(int x, int y, int z) to populate it
+}
+
+void Block::init(int x, int y, int z){
+
+	if(data != NULL){
+		delete[] data;
+	}
+
 	x_res = x;
 	y_res = y;
 	z_res = z;
 
 	num_cells = x_res * y_res * z_res;
 
-	data = new unsigned char[num_cells];
-	mask = new bool[num_cells];
+	std::cout << "the number of cells is " << num_cells << std::endl;
+
+	data = new Vox[num_cells];
 
 	for(int i = 0; i < num_cells; i++){ //initialize arrays with zero values
-		data[i] = 0;
-		mask[i] = false;
+		data[i].state = 0;
+		data[i].mask = false;
 	}
 }
 
-void Block::set_data_by_index(int x,int y,int z,int set){
+Block::~Block(){
+	std::cout << "deleting block" << std::endl;
+	delete[] data;
+}
+
+void Block::set_data_by_index(int x,int y,int z,Vox set){
 
 	//validate the input - make sure you are in the block
 	bool x_valid = x < x_res && x >= 0;
 	bool y_valid = y < y_res && y >= 0;
 	bool z_valid = z < z_res && z >= 0;
 
-	bool masked = mask[get_index_by_xyz(x,y,z)];
+	bool masked = data[get_index_by_xyz(x,y,z)].mask;
 
 	//all dimensions valid, do as the user asks
 	if(x_valid && y_valid && z_valid && !masked){
-		if(set <= 255){
-			data[get_index_by_xyz(x,y,z)] = set;
+		if(set.state <= 255){
+			data[get_index_by_xyz(x,y,z)].state = set.state;
 		}else{
-			data[get_index_by_xyz(x,y,z)] = 255;
+			data[get_index_by_xyz(x,y,z)].state = 255;
 		}
 	}else{
 		if(!masked){
 			std::cout << std::endl << "Invalid index for set_data_by_index()" << std::endl;
-			std::cout << "you used " << std::to_string(x) << " which should be between 0 and ";
+
+			std::cout << "you used " << std::to_string(x) << " for x which should be between 0 and ";
 			std::cout << std::to_string(x_res) << std::endl;
-			std::cout << "you used " << std::to_string(y) << " which should be between 0 and ";
+
+			std::cout << "you used " << std::to_string(y) << " for y which should be between 0 and ";
 			std::cout << std::to_string(y_res) << std::endl;
-			std::cout << "you used " << std::to_string(z) << " which should be between 0 and ";
+
+			std::cout << "you used " << std::to_string(z) << " for z which should be between 0 and ";
 			std::cout << std::to_string(z_res) << std::endl;
 		}else{
-			std::cout << "Cell " << std::to_string(x) << " " << std::to_string(y) << " " << std::to_string(z) << " is masked";
+			std::cout << "Cell " 
+				<< std::to_string(x) << " " 
+				<< std::to_string(y) << " " 
+				<< std::to_string(z) << " is masked";
 		}
 	}
 
 	return;
 }
 
-int Block::get_data_by_index(int x,int y,int z){
+Vox Block::get_data_by_index(int x,int y,int z){
 
 	//validate the input
 	bool x_valid = x < x_res && x >= 0;
@@ -60,7 +81,10 @@ int Block::get_data_by_index(int x,int y,int z){
 		return(data[get_index_by_xyz(x,y,z)]); //grab the data from the long 1d array
 	}else{
 		std::cout << std::endl << "Invalid index for get_data_by_index()" << std::endl;
-		return(0); //if it is outside, return an empty state
+
+		Vox temp = {0,false};
+
+		return(temp); //if it is outside, return an empty state
 	}
 }
 
@@ -73,8 +97,19 @@ int Block::get_index_by_xyz(int x, int y, int z){
 	//within the row that has been specified by the z and y coordinates.
 
 
+Voraldo::Voraldo(){
+
+}
+
 Voraldo::Voraldo(int x, int y, int z){
-	Vblock = new Block(x,y,z);
+	Vblock = new Block;
+	Vblock->init(x,y,z);
+}
+
+
+Voraldo::~Voraldo(){
+	std::cout << "deleting voraldo object" << std::endl; 
+	delete Vblock;
 }
 
 
@@ -92,6 +127,8 @@ void Voraldo::save_block_to_file(){
 
 	//produce the PNG image, with a default name
 
+	//this doesn't actually happen right now.
+
 	std::fstream f;
 
 	f.open(filename);
@@ -103,8 +140,37 @@ void Voraldo::save_block_to_file(){
 }
 
 void Voraldo::load_block_from_file(){
+
+	//this needs to delete any existing data and make new data from the file
+
+
+
+
+
 	//load the JSON file, "default.txt"
 
+	//code to load file into block
+	//check dimensions first and then load it all in
+	int tempx = 0;
+	int tempy = 0;  //variables for incoming json values
+	int tempz = 0;
+
+	std::string filename = "default.txt";
+
+	nlohmann::json j; //declare json object
+	std::fstream f;	  //declare fstream object
+
+	f.open(filename); //open the user's file
+
+	f >> j;			  //read in all the content of that file
+
+	tempx = j.value("xdim",0);
+	tempy = j.value("ydim",0); //take some specific values from the json input file
+	tempz = j.value("zdim",0);	
+	//the formatting is j.value("key name", "default value if key not found")
+
 	//load the PNG image, with a name specified by the JSON file
+
+	//this doesn't actually happen right now.
 
 }

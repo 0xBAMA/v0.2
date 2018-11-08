@@ -1,0 +1,1 @@
+{"image_filename":"default.png","xdim":256,"ydim":256,"zdim":256}
