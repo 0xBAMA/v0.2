@@ -16,8 +16,6 @@ void Block::init(int x, int y, int z){
 
 	num_cells = x_res * y_res * z_res;
 
-	std::cout << "the number of cells is " << num_cells << std::endl;
-
 	data = new Vox[num_cells];
 
 	for(int i = 0; i < num_cells; i++){ //initialize arrays with zero values
@@ -84,7 +82,7 @@ Vox Block::get_data_by_index(int x,int y,int z){
 
 		Vox temp = {0,false};
 
-		return(temp); //if it is outside, return an empty state
+		return(temp); //if it is outside, return an empty state 
 	}
 }
 
@@ -117,17 +115,13 @@ Voraldo::~Voraldo(){
 void Voraldo::save_block_to_file(){
 	//produce the JSON file "default.txt"
 	nlohmann::json j;
-	std::string filename = "default.txt"; 
+	std::string filename = "save/default.txt"; 
 
 	j["xdim"] = Vblock->get_x_res();
 	j["ydim"] = Vblock->get_y_res();
 	j["zdim"] = Vblock->get_z_res();
 
-	j["image_filename"] = "default.png";
-
-	//produce the PNG image, with a default name
-
-	//this doesn't actually happen right now.
+	j["image_filename"] = "save/default.png";
 
 	std::fstream f;
 
@@ -136,6 +130,12 @@ void Voraldo::save_block_to_file(){
 	f << j.dump();
 
 	f.close();
+
+	//produce the PNG image, with a default name
+	//this doesn't actually happen right now.
+
+	//eventually we need to figure out how this
+	//is going to be structured. 
 
 }
 
@@ -155,7 +155,7 @@ void Voraldo::load_block_from_file(){
 	int tempy = 0;  //variables for incoming json values
 	int tempz = 0;
 
-	std::string filename = "default.txt";
+	std::string filename = "save/default.txt";
 
 	nlohmann::json j; //declare json object
 	std::fstream f;	  //declare fstream object
@@ -169,8 +169,9 @@ void Voraldo::load_block_from_file(){
 	tempz = j.value("zdim",0);	
 	//the formatting is j.value("key name", "default value if key not found")
 
-	//load the PNG image, with a name specified by the JSON file
 
+
+	//load the PNG image, with a name specified by the JSON file
 	//this doesn't actually happen right now.
 
 }

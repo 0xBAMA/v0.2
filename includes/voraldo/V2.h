@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <math.h>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -135,14 +136,7 @@ struct RGB{
 	int blue;
 };
 
-struct RGBA{	//not sure if this will be needed yet
-	int red;
-	int green;
-	int blue;
-	int alpha;
-};
-
-class Voraldo{	//following the trend of simplifying
+class Voraldo{ 
 //   ██▒   █▓ ▒█████   ██▀███   ▄▄▄       ██▓    ▓█████▄  ▒█████  
 //  ▓██░   █▒▒██▒  ██▒▓██ ▒ ██▒▒████▄    ▓██▒    ▒██▀ ██▌▒██▒  ██▒
 //   ▓██  █▒░▒██░  ██▒▓██ ░▄█ ▒▒██  ▀█▄  ▒██░    ░██   █▌▒██░  ██▒

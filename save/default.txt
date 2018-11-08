@@ -1,0 +1,1 @@
+{"image_filename":"save/default.png","xdim":257,"ydim":257,"zdim":257}
