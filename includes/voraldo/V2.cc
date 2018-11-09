@@ -20,7 +20,13 @@ void Block::init(int x, int y, int z){
 	data = new Vox[num_cells];
 
 	for(int i = 0; i < num_cells; i++){ //initialize arrays with zero values
-		data[i].state = std::rand()%255;
+		if(i%66049 < 2196){
+			data[i].state = 17;
+		}else if (i%20000 < 10){
+			data[i].state = 0;
+		}else{
+			data[i].state = 1;
+		}
 		data[i].mask = false;
 	}
 }
@@ -214,10 +220,8 @@ void Voraldo::display(){
 
 					switch(state){
 						case 0:
-							if(std::rand()%20 == 1){
-								img.draw_circle(curr_x,curr_y,2,Voraldo::grey_30,0.7);
-								img.draw_point(curr_x,curr_y,Voraldo::grey_30);
-							}
+							img.draw_circle(curr_x,curr_y,2,Voraldo::white,0.7);
+							img.draw_point(curr_x,curr_y,Voraldo::black);
 							break;
 						case 17:
 							switch(std::rand()%50){
@@ -244,7 +248,7 @@ void Voraldo::display(){
 							img.draw_point(curr_x,curr_y,Voraldo::grey_17);
 							break;
 						case 69:
-							img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_red,0.3);
+							img.draw_circle(curr_x,curr_y,4,Voraldo::some_random_red,0.3);
 							img.draw_point(curr_x,curr_y,Voraldo::white);
 							break;
 						default:
@@ -308,6 +312,9 @@ void Voraldo::save_block_to_file(){
 					break;
 				case 1:
 					img.draw_point(x,y,Voraldo::white);
+					break;
+				case 17:
+					img.draw_point(x,y,Voraldo::some_random_purple);
 					break;
 				default:
 					break;
