@@ -1,8 +1,9 @@
 #include "../voraldo/V2.h"
 
 Block::Block(){
-	data = NULL; //call Block::init(int x, int y, int z) to populate it
-}
+	data = NULL;  //declare with an empty block
+}	//call Block::init(int x, int y, int z) to populate it
+
 
 void Block::init(int x, int y, int z){
 
