@@ -174,6 +174,8 @@ public:
 	//this will need to adapt to the new file storage
 
 	const unsigned char 	 some_random_orange[3] = {255,128, 64};
+	const unsigned char	  		some_random_red[3] = { 98, 12, 14};
+	const unsigned char		 some_random_purple[3] = { 128, 4,168};
 
 	const unsigned char 				  black[3] = {  0,  0,  0};
 

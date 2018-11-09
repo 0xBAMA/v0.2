@@ -214,33 +214,37 @@ void Voraldo::display(){
 
 					switch(state){
 						case 0:
-							img.draw_point(curr_x,curr_y,Voraldo::black);
+							if(std::rand()%20 == 1){
+								img.draw_circle(curr_x,curr_y,2,Voraldo::grey_30,0.7);
+								img.draw_point(curr_x,curr_y,Voraldo::grey_30);
+							}
 							break;
-						case 1:
-							img.draw_point(curr_x,curr_y,Voraldo::grey_03);
+						case 17:
+							switch(std::rand()%50){
+								case 1:
+									img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_orange,0.7);
+									img.draw_point(curr_x,curr_y,Voraldo::grey_30);
+									break;
+								case 2:
+									img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_red,0.7);
+									img.draw_point(curr_x,curr_y,Voraldo::some_random_red);
+									break;
+								case 3:
+									break;
+								case 4:
+									if(std::rand()%20 == 1){
+										img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_purple,0.7);
+										img.draw_point(curr_x,curr_y,Voraldo::some_random_purple);
+									}
+									break;
+								default:
+									break;
+							}
+							img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_orange,0.7);
+							img.draw_point(curr_x,curr_y,Voraldo::grey_17);
 							break;
-						case 2:
-							img.draw_point(curr_x,curr_y,Voraldo::grey_07);
-							break;
-						case 3:
-							img.draw_point(curr_x,curr_y,Voraldo::grey_18);
-							break;
-						case 4:
-							img.draw_point(curr_x,curr_y,Voraldo::grey_26);
-							break;
-						case 5:
-							img.draw_point(curr_x,curr_y,Voraldo::grey_32);
-							break;
-						case 6:
-							img.draw_point(curr_x,curr_y,Voraldo::grey_40);
-							break;
-						case 7:
-							img.draw_point(curr_x,curr_y,Voraldo::grey_45);
-							break;
-						case 8:
-							img.draw_point(curr_x,curr_y,Voraldo::grey_50);
-							break;
-						case 9:
+						case 69:
+							img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_red,0.3);
 							img.draw_point(curr_x,curr_y,Voraldo::white);
 							break;
 						default:
