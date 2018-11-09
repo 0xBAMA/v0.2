@@ -33,8 +33,6 @@ int main(){
 
 	main_block = new Voraldo(init_x,init_y,init_z);
 
-	main_block->save_block_to_file();
-
 	auto tock = Clock::now(); //end of timekeeping
 	cout<< "-----------------" << endl;
 	cout<< "Dynamic memory allocation for " 
@@ -49,6 +47,36 @@ int main(){
 	menu();
 
 	input = user();
+
+	tick = Clock::now();
+
+	main_block->save_block_to_file();
+
+	tock = Clock::now();
+
+	cout<< "-----------------" << endl;
+	cout<< "Saving the block to an image file for  " 
+	<< init_x * init_y * init_z << " voxels took " 
+	<< std::chrono::duration_cast<milliseconds>(tock-tick).count() 
+	<< " milliseconds" << endl;
+	cout<< "-----------------" << endl << endl;
+
+
+	tick = Clock::now();
+
+	main_block->display();
+
+	tock = Clock::now();
+
+	cout<< "-----------------" << endl;
+	cout<< "Displaying the block of  " 
+	<< init_x * init_y * init_z << " voxels took " 
+	<< std::chrono::duration_cast<milliseconds>(tock-tick).count() 
+	<< " milliseconds" << endl;
+	cout<< "-----------------" << endl << endl;
+
+
+
 	
 	exit();
 

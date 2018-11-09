@@ -33,6 +33,7 @@
 //not in use right now
 
 using vec = linalg::aliases::double4;
+using vec2 = linalg::aliases::double2;
 using mat = linalg::aliases::double4x4;
 using intvec = linalg::aliases::int3;
 using veContainer = std::vector<vec>;
@@ -66,10 +67,6 @@ public:
 	Block();
 	~Block();
 
-	int get_x_res(){return x_res;}
-	int get_y_res(){return y_res;}
-	int get_z_res(){return z_res;}
-
 	void init(int x, int y, int z);
 
 
@@ -99,9 +96,14 @@ public:
   now.
 */
 
+	int get_x_res(){return x_res;}
+	int get_y_res(){return y_res;}
+	int get_z_res(){return z_res;}
 
-	void set_data_by_index(int x, int y, int z, Vox set);	
-	Vox  get_data_by_index(int x, int y, int z);
+	void set_data_by_3d_index(int x, int y, int z, Vox set);	
+	Vox  get_data_by_3d_index(int x, int y, int z);
+
+	Vox  get_data_by_array_index(int index){return data[index];}
 
 
 private:
@@ -120,7 +122,7 @@ private:
 
 	Vox *data;
 
-	int get_index_by_xyz(int x, int y, int z);
+	int get_array_index_by_xyz(int x, int y, int z);
 
 };
 
@@ -156,6 +158,8 @@ public:
 	Voraldo();
 	~Voraldo();
 
+	void display();
+
 
 	//save
 	void save_block_to_file(); 
@@ -168,6 +172,64 @@ public:
 	//load
 	void load_block_from_file();
 	//this will need to adapt to the new file storage
+
+	const unsigned char 	 some_random_orange[3] = {255,128, 64};
+
+	const unsigned char 				  black[3] = {  0,  0,  0};
+
+	const unsigned char 		  		grey_01[3] = {  5,  5,  5};
+	const unsigned char 		  		grey_02[3] = { 10, 10, 10};
+	const unsigned char 		  		grey_03[3] = { 15, 15, 15};
+	const unsigned char 		  		grey_04[3] = { 20, 20, 20};
+	const unsigned char 		  		grey_05[3] = { 25, 25, 25};
+	const unsigned char 		  		grey_06[3] = { 30, 30, 30};
+	const unsigned char 		  		grey_07[3] = { 35, 35, 35};
+	const unsigned char 		  		grey_08[3] = { 40, 40, 40};
+	const unsigned char 		  		grey_09[3] = { 45, 45, 45};
+	const unsigned char 		  		grey_10[3] = { 50, 50, 50};
+	const unsigned char 		  		grey_11[3] = { 55, 55, 55};
+	const unsigned char 		  		grey_12[3] = { 60, 60, 60};
+	const unsigned char 		  		grey_13[3] = { 65, 65, 65};
+	const unsigned char 		  		grey_14[3] = { 70, 70, 70};
+	const unsigned char 		  		grey_15[3] = { 75, 75, 75};
+	const unsigned char 		  		grey_16[3] = { 80, 80, 80};
+	const unsigned char 		  		grey_17[3] = { 85, 85, 85};
+	const unsigned char 		  		grey_18[3] = { 90, 90, 90};
+	const unsigned char 		  		grey_19[3] = { 95, 95, 95};
+	const unsigned char 		  		grey_20[3] = {100,100,100};
+	const unsigned char 		  		grey_21[3] = {105,105,105};
+	const unsigned char 		  		grey_22[3] = {110,110,110};
+	const unsigned char 		  		grey_23[3] = {115,115,115};
+	const unsigned char 		  		grey_24[3] = {120,120,120};
+	const unsigned char 		  		grey_25[3] = {125,125,125};
+	const unsigned char 		  		grey_26[3] = {130,130,130};
+	const unsigned char 		  		grey_27[3] = {135,135,135};
+	const unsigned char 		  		grey_28[3] = {140,140,140};
+	const unsigned char 		  		grey_29[3] = {145,145,145};
+	const unsigned char 		  		grey_30[3] = {150,150,150};
+	const unsigned char 		  		grey_31[3] = {155,155,155};
+	const unsigned char 		  		grey_32[3] = {160,160,160};
+	const unsigned char 		  		grey_33[3] = {165,165,165};
+	const unsigned char 		  		grey_34[3] = {170,170,170};
+	const unsigned char 		  		grey_35[3] = {175,175,175};
+	const unsigned char 		  		grey_36[3] = {180,180,180};
+	const unsigned char 		  		grey_37[3] = {185,185,185};
+	const unsigned char 		  		grey_38[3] = {190,190,190};
+	const unsigned char 		  		grey_39[3] = {195,195,195};
+	const unsigned char 		  		grey_40[3] = {200,200,200};
+	const unsigned char 		  		grey_41[3] = {205,205,205};
+	const unsigned char 		  		grey_42[3] = {210,210,210};
+	const unsigned char 		  		grey_43[3] = {215,215,215};
+	const unsigned char 		  		grey_44[3] = {220,220,220};
+	const unsigned char 		  		grey_45[3] = {225,225,225};
+	const unsigned char 		  		grey_46[3] = {230,230,230};
+	const unsigned char 		  		grey_47[3] = {235,235,235};
+	const unsigned char 		  		grey_48[3] = {240,240,240};
+	const unsigned char 		  		grey_49[3] = {245,245,245};
+	const unsigned char 		  		grey_50[3] = {250,250,250};
+
+
+	const unsigned char				  	  white[3] = {255,255,255};
 
 private:
 
