@@ -20,13 +20,14 @@ void Block::init(int x, int y, int z){
 	data = new Vox[num_cells];
 
 	for(int i = 0; i < num_cells; i++){ //initialize arrays with zero values
-		if(i%66049 < 2196){
-			data[i].state = 17;
-		}else if (i%20000 < 10){
-			data[i].state = 0;
-		}else{
-			data[i].state = 1;
-		}
+		// if(i%66049 < 2196){
+		// 	data[i].state = 17;
+		// }else if (i%20000 < 10){
+		// 	data[i].state = 0;
+		// }else{
+		// 	data[i].state = 1;
+		// }
+		data[i].state = std::rand()%3000;
 		data[i].mask = false;
 	}
 }
@@ -119,13 +120,13 @@ Voraldo::~Voraldo(){
 
 void Voraldo::display(){
 
-	double y_upper = -2.28;
+	double y_upper = -1.618;
 
 	double y_lower_long = 1.0;
 	double y_lower_short = 0.8;
 
 	double x_short = 1.0;
-	double x_mid = 1.73;
+	double x_mid = 1.618;
 	double x_long = 2.26;
 
 	using namespace cimg_library;
@@ -187,19 +188,19 @@ void Voraldo::display(){
 
 	//third row
 	img.draw_point( 500,2503,Voraldo::white); //center #7
-	centers[6] = vec2(400,2903);
+	centers[6] = vec2(400,2803);
 	center_x_vecs[6] = vec2(x_long,0);
 	center_y_vecs[6] = vec2(0,y_upper);
 	center_z_vecs[6] = vec2(-1.0*x_short,0);
 
 	img.draw_point(1501,2503,Voraldo::white); //center #8
-	centers[7] = vec2(1501,2903);
+	centers[7] = vec2(1501,2803);
 	center_x_vecs[7] = vec2(x_mid,0);
 	center_y_vecs[7] = vec2(0,y_upper);
 	center_z_vecs[7] = vec2(-1.0*x_mid,0);
 
 	img.draw_point(2503,2503,Voraldo::white); //center #9
-	centers[8] = vec2(2603,2903);
+	centers[8] = vec2(2603,2803);
 	center_x_vecs[8] = vec2(x_short,0);
 	center_y_vecs[8] = vec2(0,y_upper);
 	center_z_vecs[8] = vec2(-1.0*x_long,0);
@@ -208,6 +209,8 @@ void Voraldo::display(){
 	int curr_y = 0;
 
 	int state = 0;
+
+	Palette_entry c;
 
 	for(int x = 0; x < Vblock->get_x_res(); x++){
 		for(int y = 0; y < Vblock->get_y_res(); y++){
@@ -218,41 +221,14 @@ void Voraldo::display(){
 					curr_x = int(floor(centers[w][0]+x*center_x_vecs[w][0]+y*center_y_vecs[w][0]+z*center_z_vecs[w][0]));
 					curr_y = int(floor(centers[w][1]+x*center_x_vecs[w][1]+y*center_y_vecs[w][1]+z*center_z_vecs[w][1]));
 
-					switch(state){
-						case 0:
-							img.draw_circle(curr_x,curr_y,2,Voraldo::white,0.7);
-							img.draw_point(curr_x,curr_y,Voraldo::black);
-							break;
-						case 17:
-							switch(std::rand()%50){
-								case 1:
-									img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_orange,0.7);
-									img.draw_point(curr_x,curr_y,Voraldo::grey_30);
-									break;
-								case 2:
-									img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_red,0.7);
-									img.draw_point(curr_x,curr_y,Voraldo::some_random_red);
-									break;
-								case 3:
-									break;
-								case 4:
-									if(std::rand()%20 == 1){
-										img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_purple,0.7);
-										img.draw_point(curr_x,curr_y,Voraldo::some_random_purple);
-									}
-									break;
-								default:
-									break;
-							}
-							img.draw_circle(curr_x,curr_y,2,Voraldo::some_random_orange,0.7);
-							img.draw_point(curr_x,curr_y,Voraldo::grey_17);
-							break;
-						case 69:
-							img.draw_circle(curr_x,curr_y,4,Voraldo::some_random_red,0.3);
-							img.draw_point(curr_x,curr_y,Voraldo::white);
-							break;
-						default:
-							break;
+					c = get_palette_for_state(state);
+
+					if(c.draw_circle){
+						img.draw_circle(curr_x,curr_y,c.radius,c.circle_color,c.circle_alpha);
+					}
+
+					if(c.draw_point){
+						img.draw_point(curr_x,curr_y,c.point_color);
 					}
 				}
 			}
@@ -262,7 +238,203 @@ void Voraldo::display(){
 	img.save_bmp("output.bmp");
 }
 
+Palette_entry Voraldo::get_palette_for_state(int state){
 
+	Palette_entry temp;
+	temp.point_color = Voraldo::black;
+	temp.point_alpha = 0.0;
+	temp.draw_point = false;
+	temp.circle_color = Voraldo::black;
+	temp.radius = 0;
+	temp.circle_alpha = 0.0;
+	temp.draw_circle = false;
+
+	switch (state){
+		case 0: //empty point
+			break;
+		case 1: //white point
+			temp.point_color = Voraldo::white;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 2: //black point
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 3: //dark grey
+			temp.point_color = Voraldo::grey_05;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 4:	//middle-dark grey
+			temp.point_color = Voraldo::grey_15;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 5:	//middle grey
+			temp.point_color = Voraldo::grey_25;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 6: //middle-light grey
+			temp.point_color = Voraldo::grey_36;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 7: //light grey
+			temp.point_color = Voraldo::grey_47;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 8: //dark red
+			temp.point_color = Voraldo::red_05;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 9:	//middle-dark red
+			temp.point_color = Voraldo::red_15;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 10://middle red
+			temp.point_color = Voraldo::red_25;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 11: //middle-light red
+			temp.point_color = Voraldo::red_36;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 12: //light red
+			temp.point_color = Voraldo::red_47;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 13: //dark green
+			temp.point_color = Voraldo::green_05;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 14:	//middle-dark green
+			temp.point_color = Voraldo::green_15;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 15://middle green
+			temp.point_color = Voraldo::green_25;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 16: //middle-light green
+			temp.point_color = Voraldo::green_36;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 17: //light green
+			temp.point_color = Voraldo::green_47;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 18: //dark blue
+			temp.point_color = Voraldo::blue_05;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 19: //middle-dark blue
+			temp.point_color = Voraldo::blue_15;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 20://middle blue
+			temp.point_color = Voraldo::blue_25;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 21: //middle-light blue
+			temp.point_color = Voraldo::blue_36;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 22: //light blue
+			temp.point_color = Voraldo::blue_47;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			break;
+		case 23:
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			temp.circle_color = Voraldo::grey_20;
+			temp.radius = 2;
+			temp.circle_alpha = 0.9;
+			temp.draw_circle = true;
+		case 24:
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			temp.circle_color = Voraldo::grey_20;
+			temp.radius = 2;
+			temp.circle_alpha = 0.7;
+			temp.draw_circle = true;
+		case 25:
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			temp.circle_color = Voraldo::grey_20;
+			temp.radius = 2;
+			temp.circle_alpha = 0.5;
+			temp.draw_circle = true;
+		case 26:
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			temp.circle_color = Voraldo::grey_20;
+			temp.radius = 2;
+			temp.circle_alpha = 0.4;
+			temp.draw_circle = true;
+		case 27:
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			temp.circle_color = Voraldo::grey_20;
+			temp.radius = 2;
+			temp.circle_alpha = 0.3;
+			temp.draw_circle = true;
+		case 28:
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			temp.circle_color = Voraldo::grey_20;
+			temp.radius = 2;
+			temp.circle_alpha = 0.2;
+			temp.draw_circle = true;
+		case 29:
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			temp.circle_color = Voraldo::grey_20;
+			temp.radius = 2;
+			temp.circle_alpha = 0.1;
+			temp.draw_circle = true;
+		case 30: //black point with white shroud
+			temp.point_color = Voraldo::black;
+			temp.point_alpha = 1.0;
+			temp.draw_point = true;
+			temp.circle_color = Voraldo::white;
+			temp.radius = 2;
+			temp.circle_alpha = 0.5;
+			temp.draw_circle = true;
+			break;
+		case 69:	//
+			break;
+		default:
+			break;
+	}
+
+	return (temp);
+}
 
 void Voraldo::save_block_to_file(){
 	//produce the JSON file "default.txt"

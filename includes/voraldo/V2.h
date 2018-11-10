@@ -41,7 +41,7 @@ using veContainer = std::vector<vec>;
 //V2 block class
 
 struct Vox {
-	unsigned char state;
+	unsigned int state;
 	bool mask;
 };
 
@@ -138,6 +138,17 @@ struct RGB{
 	int blue;
 };
 
+struct Palette_entry{
+	const unsigned char *point_color;
+	double point_alpha;
+	bool draw_point;
+
+	const unsigned char *circle_color;
+	int radius;
+	double circle_alpha;
+	bool draw_circle;
+};
+
 class Voraldo{ 
 //   ██▒   █▓ ▒█████   ██▀███   ▄▄▄       ██▓    ▓█████▄  ▒█████  
 //  ▓██░   █▒▒██▒  ██▒▓██ ▒ ██▒▒████▄    ▓██▒    ▒██▀ ██▌▒██▒  ██▒
@@ -171,6 +182,8 @@ public:
 
 	//load
 	void load_block_from_file();
+
+	Palette_entry get_palette_for_state(int state);
 	//this will need to adapt to the new file storage
 
 	const unsigned char 	 some_random_orange[3] = {255,128, 64};
@@ -179,6 +192,7 @@ public:
 
 	const unsigned char 				  black[3] = {  0,  0,  0};
 
+	//greys
 	const unsigned char 		  		grey_01[3] = {  5,  5,  5};
 	const unsigned char 		  		grey_02[3] = { 10, 10, 10};
 	const unsigned char 		  		grey_03[3] = { 15, 15, 15};
@@ -232,6 +246,27 @@ public:
 
 
 	const unsigned char				  	  white[3] = {255,255,255};
+
+
+	//reds
+	const unsigned char 		  		red_05[3] = { 25,  0,  0};
+	const unsigned char 		  		red_15[3] = { 75,  0,  0};
+	const unsigned char 		  		red_25[3] = {125,  0,  0};
+	const unsigned char 		  		red_36[3] = {180,  0,  0};
+	const unsigned char 		  		red_47[3] = {235,  0,  0};
+
+	const unsigned char 		  		green_05[3] = {0, 25,  0};
+	const unsigned char 		  		green_15[3] = {0, 75,  0};
+	const unsigned char 		  		green_25[3] = {0,125,  0};
+	const unsigned char 		  		green_36[3] = {0,180,  0};
+	const unsigned char 		  		green_47[3] = {0,235,  0};
+
+	const unsigned char 		  		blue_05[3] = {0,0, 25};
+	const unsigned char 		  		blue_15[3] = {0,0, 75};
+	const unsigned char 		  		blue_25[3] = {0,0,125};
+	const unsigned char 		  		blue_36[3] = {0,0,180};
+	const unsigned char 		  		blue_47[3] = {0,0,235};
+
 
 private:
 
