@@ -50,6 +50,32 @@ int main(){
 
 	tick = Clock::now();
 
+	main_block->draw_ellipsoid(128,128,128,64,16,16,12);
+	main_block->draw_ellipsoid(128,128,128,16,64,16,17);
+	main_block->draw_ellipsoid(128,128,128,16,16,64,22);
+
+	main_block->draw_sphere(192,128,128,22,11);
+	main_block->draw_sphere(128,192,128,22,16);
+	main_block->draw_sphere(128,128,192,22,21);
+
+	main_block->draw_sphere( 64,128,128,22, 9);
+	main_block->draw_sphere(128, 64,128,22,14);
+	main_block->draw_sphere(128,128, 64,22,19);
+
+
+	main_block->draw_triangle(192,128,128, 128,192,128, 128,128,192, 30);
+
+
+	tock = Clock::now();
+
+	cout<< "-----------------" << endl;
+	cout<< "all drawing took " 
+	<< std::chrono::duration_cast<milliseconds>(tock-tick).count() 
+	<< " milliseconds" << endl;
+	cout<< "-----------------" << endl << endl;
+
+	tick = Clock::now();
+
 	main_block->save_block_to_file();
 
 	tock = Clock::now();

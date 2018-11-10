@@ -269,10 +269,11 @@ public:
 
 	void draw_point(int x, int y, int z, int state);
 	void draw_line_segment(int x1, int x2, int y1, int y2, int z1, int z2, int state);
+	void draw_triangle(int x0, int y0, int z0, int x1, int y1, int z1, int x2, int y2, int z2, int state);
 	void draw_sphere(int x, int y, int z, int radius, int state);
 	void draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state);
 	void draw_cylinder();
-	void draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax);
+	void draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, int state);
 
 
 private:

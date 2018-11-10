@@ -19,23 +19,18 @@ void Block::init(int x, int y, int z){
 
 	data = new Vox[num_cells];
 
-	for(int i = 0; i < num_cells; i++){ //initialize arrays with zero values
-		// if(i%66049 < 2196){
-		// 	data[i].state = 17;
-		// }else if (i%20000 < 10){
-		// 	data[i].state = 0;
-		// }else{
-		// 	data[i].state = 1;
-		// }
-		data[i].state = std::rand()%3000;
+	for(int i = 0; i < num_cells; i++){ //initialize arrays
+
 		data[i].mask = false;
 
 
 		//this makes nice noise, it's from the first iteration.
-		// int randcheck = rand()%696;
-		// 		if(randcheck == 69){
-		// 			data[i][j][k] = rand()%256;
-		// 		}
+		int randcheck = rand()%696;
+		if(randcheck == 69){
+			data[i].state = rand()%256;
+		}else{
+			data[i].state = 99;
+		}
 	}
 }
 
@@ -308,6 +303,10 @@ Palette_entry Voraldo::get_palette_for_state(int state){
 			temp.point_color = Voraldo::red_25;
 			temp.point_alpha = 1.0;
 			temp.draw_point = true;
+			temp.circle_color = Voraldo::red_25;
+			temp.radius = 1;
+			temp.circle_alpha = 0.7;
+			temp.draw_circle = true;
 			break;
 		case 11: //middle-light red
 			temp.point_color = Voraldo::red_36;
@@ -318,6 +317,10 @@ Palette_entry Voraldo::get_palette_for_state(int state){
 			temp.point_color = Voraldo::red_47;
 			temp.point_alpha = 1.0;
 			temp.draw_point = true;
+			temp.circle_color = Voraldo::red_47;
+			temp.radius = 1;
+			temp.circle_alpha = 0.7;
+			temp.draw_circle = true;
 			break;
 		case 13: //dark green
 			temp.point_color = Voraldo::green_05;
@@ -333,6 +336,10 @@ Palette_entry Voraldo::get_palette_for_state(int state){
 			temp.point_color = Voraldo::green_25;
 			temp.point_alpha = 1.0;
 			temp.draw_point = true;
+			temp.circle_color = Voraldo::green_25;
+			temp.radius = 1;
+			temp.circle_alpha = 0.7;
+			temp.draw_circle = true;
 			break;
 		case 16: //middle-light green
 			temp.point_color = Voraldo::green_36;
@@ -343,6 +350,10 @@ Palette_entry Voraldo::get_palette_for_state(int state){
 			temp.point_color = Voraldo::green_47;
 			temp.point_alpha = 1.0;
 			temp.draw_point = true;
+			temp.circle_color = Voraldo::green_47;
+			temp.radius = 1;
+			temp.circle_alpha = 0.7;
+			temp.draw_circle = true;
 			break;
 		case 18: //dark blue
 			temp.point_color = Voraldo::blue_05;
@@ -358,6 +369,10 @@ Palette_entry Voraldo::get_palette_for_state(int state){
 			temp.point_color = Voraldo::blue_25;
 			temp.point_alpha = 1.0;
 			temp.draw_point = true;
+			temp.circle_color = Voraldo::blue_25;
+			temp.radius = 1;
+			temp.circle_alpha = 0.7;
+			temp.draw_circle = true;
 			break;
 		case 21: //middle-light blue
 			temp.point_color = Voraldo::blue_36;
@@ -368,6 +383,10 @@ Palette_entry Voraldo::get_palette_for_state(int state){
 			temp.point_color = Voraldo::blue_47;
 			temp.point_alpha = 1.0;
 			temp.draw_point = true;
+			temp.circle_color = Voraldo::blue_47;
+			temp.radius = 1;
+			temp.circle_alpha = 0.7;
+			temp.draw_circle = true;
 			break;
 		case 23:
 			temp.point_color = Voraldo::black;
@@ -431,7 +450,7 @@ Palette_entry Voraldo::get_palette_for_state(int state){
 			temp.draw_point = true;
 			temp.circle_color = Voraldo::white;
 			temp.radius = 2;
-			temp.circle_alpha = 0.5;
+			temp.circle_alpha = 0.2;
 			temp.draw_circle = true;
 			break;
 		case 69:	//
@@ -556,21 +575,140 @@ void Voraldo::draw_point(int x, int y, int z, int state){
 }
 
 void Voraldo::draw_line_segment(int x1, int x2, int y1, int y2, int z1, int z2, int state){
+	double xdisp = x2 - x1;
+	double ydisp = y2 - y1;
+	double zdisp = z2 - z1;
+
+	double length = std::sqrt(xdisp*xdisp + ydisp*ydisp + zdisp*zdisp);
+
+	int num_steps = 2*std::floor(length);
+
+	xdisp = xdisp/num_steps;
+	ydisp = ydisp/num_steps;
+	zdisp = zdisp/num_steps;
+
+	double current_x = x1;
+	double current_y = y1;
+	double current_z = z1;
+
+	for(int i = 0; i < num_steps; i++){
+		draw_point(current_x,current_y,current_z,state);
+		current_x += xdisp;
+		current_y += ydisp;
+		current_z += zdisp;
+	}
+}
+
+
+void Voraldo::draw_triangle(int x0, int y0, int z0, int x1, int y1, int z1, int x2, int y2, int z2, int state){
+	//point zero is the origin point
+
+	double disp1x = x0-x1; 
+	double disp1y = y0-y1;
+	double disp1z = z0-z1;
+
+	double disp2x = x0-x2; 
+	double disp2y = y0-y2;
+	double disp2z = z0-z2;
+
+	double length1 = std::sqrt(disp1x*disp1x+disp1y*disp1y+disp1z*disp1z);
+	double length2 = std::sqrt(disp2x*disp2x+disp2y*disp2y+disp2z*disp2z);
+
+	double length;
+
+	if(length1 > length2){
+		length = length1;
+	}else{
+		length = length2;
+	}
+
+	disp1x = disp1x/length;
+	disp1y = disp1y/length;
+	disp1z = disp1z/length;
+
+	disp2x = disp2x/length;
+	disp2y = disp2y/length;
+	disp2z = disp2z/length;
+
+	double current_x1 = x1;//start at x1
+	double current_y1 = y1;//start at y1
+	double current_z1 = z1;//start at z1
+
+	double current_x2 = x2;//start at x2
+	double current_y2 = y2;//start at y2
+	double current_z2 = z2;//start at z2
+
+	for (int i = 0; i < std::floor(length); ++i){
+		draw_line_segment(current_x1,current_y1,current_z1,current_x2,current_y2,current_z2,state);
+
+		current_x1 += disp1x;
+		current_y1 += disp1y;
+		current_z1 += disp1z;
+
+		current_x2 += disp2x;
+		current_y2 += disp2y;
+		current_z2 += disp2z;
+	}
+
 
 }
 
 void Voraldo::draw_sphere(int x, int y, int z, int radius, int state){
+	for(int i = 0; i < Vblock->get_x_res(); i++){	
+		for(int j = 0; j < Vblock->get_y_res(); j++){
+			for(int k = 0; k < Vblock->get_z_res(); k++){
+				double testx = (i-x)*(i-x);	//apply offsets and square
+				double testy = (j-y)*(j-y);
+				double testz = (k-z)*(k-z);
 
+				if((testx + testy + testz) < radius*radius){	//pretty self explainatory, equation of sphere
+					Vblock->set_data_by_3d_index(i,j,k,state);
+				}
+			}
+		}
+	}
 }
 
 void Voraldo::draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state){
+	for(int i = 0; i < Vblock->get_x_res(); i++){	
+		for(int j = 0; j < Vblock->get_y_res(); j++){
+			for(int k = 0; k < Vblock->get_z_res(); k++){
+				double testx = (i-x)*(i-x);	//apply offsets and square
+				double testy = (j-y)*(j-y);
+				double testz = (k-z)*(k-z);
 
+				double radx = xrad*xrad;
+				double rady = yrad*yrad;
+				double radz = zrad*zrad;
+
+				double result = testx/radx + testy/rady + testz/radz;
+
+				if(result <= 1){	//point inside ellipsoid - do we want to be able to invert this?
+					//(outside, or on the surface, with >= and ==, respectively)
+					Vblock->set_data_by_3d_index(i,j,k,state); 
+				}
+			}
+		}
+	}
 }
 
 void Voraldo::draw_cylinder(){
 
 }
 
-void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax){
+void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, int state){
+	for(int i = 0; i < Vblock->get_x_res(); i++){	
+		for(int j = 0; j < Vblock->get_y_res(); j++){
+			for(int k = 0; k < Vblock->get_z_res(); k++){
 
+				bool xtest = i <= xmax && i >= xmin;
+				bool ytest = i <= ymax && i >= ymin;
+				bool ztest = i <= zmax && i >= zmin;
+
+				if(xtest && ytest && ztest){
+					Vblock->set_data_by_3d_index(i,j,k,state);
+				}
+			}
+		}
+	}
 }
