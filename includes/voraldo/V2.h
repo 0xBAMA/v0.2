@@ -100,7 +100,7 @@ public:
 	int get_y_res(){return y_res;}
 	int get_z_res(){return z_res;}
 
-	void set_data_by_3d_index(int x, int y, int z, Vox set);	
+	void set_data_by_3d_index(int x, int y, int z, int set);	
 	Vox  get_data_by_3d_index(int x, int y, int z);
 
 	Vox  get_data_by_array_index(int index){return data[index];}
@@ -266,6 +266,13 @@ public:
 	const unsigned char 		  		blue_25[3] = {0,0,125};
 	const unsigned char 		  		blue_36[3] = {0,0,180};
 	const unsigned char 		  		blue_47[3] = {0,0,235};
+
+	void draw_point(int x, int y, int z, int state);
+	void draw_line_segment(int x1, int x2, int y1, int y2, int z1, int z2, int state);
+	void draw_sphere(int x, int y, int z, int radius, int state);
+	void draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state);
+	void draw_cylinder();
+	void draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax);
 
 
 private:

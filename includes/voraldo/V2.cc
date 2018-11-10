@@ -29,6 +29,13 @@ void Block::init(int x, int y, int z){
 		// }
 		data[i].state = std::rand()%3000;
 		data[i].mask = false;
+
+
+		//this makes nice noise, it's from the first iteration.
+		// int randcheck = rand()%696;
+		// 		if(randcheck == 69){
+		// 			data[i][j][k] = rand()%256;
+		// 		}
 	}
 }
 
@@ -37,7 +44,7 @@ Block::~Block(){
 	delete[] data;
 }
 
-void Block::set_data_by_3d_index(int x,int y,int z,Vox set){
+void Block::set_data_by_3d_index(int x,int y,int z,int set){
 
 	//validate the input - make sure you are in the block
 	bool x_valid = x < x_res && x >= 0;
@@ -48,8 +55,8 @@ void Block::set_data_by_3d_index(int x,int y,int z,Vox set){
 
 	//all dimensions valid, do as the user asks
 	if(x_valid && y_valid && z_valid && !masked){
-		if(set.state <= 255){
-			data[get_array_index_by_xyz(x,y,z)].state = set.state;
+		if(set <= 255){
+			data[get_array_index_by_xyz(x,y,z)].state = set;
 		}else{
 			data[get_array_index_by_xyz(x,y,z)].state = 255;
 		}
@@ -477,6 +484,13 @@ void Voraldo::save_block_to_file(){
 
 	for (int y = 0; y < imagey; y++){
 		for (int x = 0; x < imagex; x++){
+
+			//can get away with a 2d array, on account of it being a 2d image
+			//with a lot of rows. The format is very compatible with the 1d
+			//representation of the block, since it is written out in the
+			//same general order as you would read text, left to right and
+			//top to bottom.
+
 			int temp_state = int(Vblock->get_data_by_array_index(index).state);
 			switch(temp_state){
 				case 0:
@@ -534,5 +548,29 @@ void Voraldo::load_block_from_file(){
 
 	//load the PNG image, with a name specified by the JSON file
 	//this doesn't actually happen right now.
+
+}
+
+void Voraldo::draw_point(int x, int y, int z, int state){
+	Vblock->set_data_by_3d_index(x,y,z,state);
+}
+
+void Voraldo::draw_line_segment(int x1, int x2, int y1, int y2, int z1, int z2, int state){
+
+}
+
+void Voraldo::draw_sphere(int x, int y, int z, int radius, int state){
+
+}
+
+void Voraldo::draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state){
+
+}
+
+void Voraldo::draw_cylinder(){
+
+}
+
+void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax){
 
 }
