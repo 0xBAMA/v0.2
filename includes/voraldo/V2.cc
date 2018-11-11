@@ -574,83 +574,61 @@ void Voraldo::draw_point(int x, int y, int z, int state){
 	Vblock->set_data_by_3d_index(x,y,z,state);
 }
 
-void Voraldo::draw_line_segment(int x1, int x2, int y1, int y2, int z1, int z2, int state){
-	double xdisp = x2 - x1;
-	double ydisp = y2 - y1;
-	double zdisp = z2 - z1;
+void Voraldo::draw_line_segment(vec v1, vec v2, int state){
 
-	double length = std::sqrt(xdisp*xdisp + ydisp*ydisp + zdisp*zdisp);
+	vec starting_point = v1;
+	vec current_point = starting_point;
+	vec line_vector = (v2-v1);
 
-	int num_steps = 2*std::floor(length);
+	int length = std::floor(linalg::length(line_vector));
 
-	xdisp = xdisp/num_steps;
-	ydisp = ydisp/num_steps;
-	zdisp = zdisp/num_steps;
-
-	double current_x = x1;
-	double current_y = y1;
-	double current_z = z1;
-
-	for(int i = 0; i < num_steps; i++){
-		draw_point(current_x,current_y,current_z,state);
-		current_x += xdisp;
-		current_y += ydisp;
-		current_z += zdisp;
+	for(int i = 0; i < length; i++){
+		current_point[0] = starting_point[0] + i*(line_vector[0]/length);
+		current_point[1] = starting_point[1] + i*(line_vector[1]/length);
+		current_point[2] = starting_point[2] + i*(line_vector[2]/length);
+		draw_point(current_point[0],current_point[1],current_point[2],state);
 	}
 }
 
 
-void Voraldo::draw_triangle(int x0, int y0, int z0, int x1, int y1, int z1, int x2, int y2, int z2, int state){
+void Voraldo::draw_triangle(vec v0, vec v1, vec v2, int state){
 	//point zero is the origin point
 
-	double disp1x = x0-x1; 
-	double disp1y = y0-y1;
-	double disp1z = z0-z1;
+	vec side1 = v1-v0;
+	vec side2 = v2-v0;
 
-	double disp2x = x0-x2; 
-	double disp2y = y0-y2;
-	double disp2z = z0-z2;
-
-	double length1 = std::sqrt(disp1x*disp1x+disp1y*disp1y+disp1z*disp1z);
-	double length2 = std::sqrt(disp2x*disp2x+disp2y*disp2y+disp2z*disp2z);
+	vec c1(0,0,0);
+	vec c2(0,0,0);
 
 	double length;
 
-	if(length1 > length2){
-		length = length1;
+	if(linalg::length(side1) > linalg::length(side2)){
+		length = std::floor(linalg::length(side1));
 	}else{
-		length = length2;
+		length = std::floor(linalg::length(side2));
 	}
 
-	disp1x = disp1x/length;
-	disp1y = disp1y/length;
-	disp1z = disp1z/length;
+	if(length <= 2){
+		draw_point(v0[0],v0[1],v0[2],state);
+		draw_point(v1[0],v1[1],v1[2],state);
+		draw_point(v2[0],v2[1],v2[2],state);
+	}else{
 
-	disp2x = disp2x/length;
-	disp2y = disp2y/length;
+		side1 = side1/length;
+		side2 = side2/length;
 
-	disp2z = disp2z/length;
+		for(int i = 0; i < length; i++){
+			c1[0] = v0[0] + i*side1[0];
+			c1[1] = v0[1] + i*side1[1];
+			c1[2] = v0[2] + i*side1[2];
 
-	double current_x1 = x1;//start at x1
-	double current_y1 = y1;//start at y1
-	double current_z1 = z1;//start at z1
+			c2[0] = v0[0] + i*side2[0];
+			c2[1] = v0[1] + i*side2[1];
+			c2[2] = v0[2] + i*side2[2];
 
-	double current_x2 = x2;//start at x2
-	double current_y2 = y2;//start at y2
-	double current_z2 = z2;//start at z2
-
-	for (int i = 0; i < std::floor(length); ++i){
-		draw_line_segment(current_x1,current_y1,current_z1,current_x2,current_y2,current_z2,state);
-
-		current_x1 += disp1x;
-		current_y1 += disp1y;
-		current_z1 += disp1z;
-
-		current_x2 += disp2x;
-		current_y2 += disp2y;
-		current_z2 += disp2z;
+			draw_line_segment(c1,c2,state);
+		}
 	}
-
 
 }
 

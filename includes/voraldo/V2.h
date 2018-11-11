@@ -32,9 +32,9 @@
 //#include <bitset> 
 //not in use right now
 
-using vec = linalg::aliases::double4;
+using vec = linalg::aliases::double3;
 using vec2 = linalg::aliases::double2;
-using mat = linalg::aliases::double4x4;
+using mat = linalg::aliases::double3x3;
 using intvec = linalg::aliases::int3;
 using veContainer = std::vector<vec>;
 
@@ -268,8 +268,8 @@ public:
 	const unsigned char 		  		blue_47[3] = {0,0,235};
 
 	void draw_point(int x, int y, int z, int state);
-	void draw_line_segment(int x1, int x2, int y1, int y2, int z1, int z2, int state);
-	void draw_triangle(int x0, int y0, int z0, int x1, int y1, int z1, int x2, int y2, int z2, int state);
+	void draw_line_segment(vec v1, vec v2, int state);
+	void draw_triangle(vec v0, vec v1, vec v2, int state);
 	void draw_sphere(int x, int y, int z, int radius, int state);
 	void draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state);
 	void draw_cylinder();

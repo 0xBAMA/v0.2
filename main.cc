@@ -63,8 +63,11 @@ int main(){
 	main_block->draw_sphere(128,128, 64,22,19);
 
 
-	main_block->draw_triangle(192,128,128, 128,192,128, 128,128,192, 30);
+	main_block->draw_triangle(vec(192,128,128), vec(128,192,128), vec(128,128,192), 30);
 
+	main_block->draw_line_segment(vec(192,128,128),vec(128,192,128),11); //from +x to +y
+	main_block->draw_line_segment(vec(128,192,128),vec(128,128,192),16); //from +y to +z
+	main_block->draw_line_segment(vec(128,128,192),vec(192,128,128),21); //from +z to +x
 
 	tock = Clock::now();
 
