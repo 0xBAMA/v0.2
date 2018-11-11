@@ -453,7 +453,7 @@ Palette_entry Voraldo::get_palette_for_state(int state){
 			temp.circle_alpha = 0.2;
 			temp.draw_circle = true;
 			break;
-		case 69:	//
+		case 69:
 			break;
 		default:
 			break;
@@ -628,6 +628,7 @@ void Voraldo::draw_triangle(int x0, int y0, int z0, int x1, int y1, int z1, int 
 
 	disp2x = disp2x/length;
 	disp2y = disp2y/length;
+
 	disp2z = disp2z/length;
 
 	double current_x1 = x1;//start at x1
