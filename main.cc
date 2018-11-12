@@ -50,6 +50,12 @@ int main(){
 
 	tick = Clock::now();
 
+
+
+/*
+	//Jack with Triangle
+	
+
 	main_block->draw_ellipsoid(128,128,128,64,16,16,12);
 	main_block->draw_ellipsoid(128,128,128,16,64,16,17);
 	main_block->draw_ellipsoid(128,128,128,16,16,64,22);
@@ -68,7 +74,34 @@ int main(){
 	main_block->draw_line_segment(vec(192,128,128),vec(128,192,128),11); //from +x to +y
 	main_block->draw_line_segment(vec(128,192,128),vec(128,128,192),16); //from +y to +z
 	main_block->draw_line_segment(vec(128,128,192),vec(192,128,128),21); //from +z to +x
+*/
 
+/*
+	int grass = 7; //VORALDO_STATE_BASIC_GREEN_LEVEL0
+
+	main_block->draw_blockoid(0,256,0,50,0,256,grass);
+
+	main_block->draw_blockoid(32,224,20,200,32,224, 9);
+	main_block->draw_blockoid(35,221,23,197,35,221, 8);
+
+	main_block->draw_blockoid(38,218,25,195,38,218, 29);
+	main_block->draw_blockoid(38,218,27,195,38,218,  0);
+	main_block->draw_blockoid(38,218,75,195,38,218,  8);
+	main_block->draw_blockoid(38,218,77,195,38,218, 29);
+	main_block->draw_blockoid(38,218,79,195,38,218,  0);
+
+	main_block->draw_blockoid(128,256,25,256,128,256, 0);
+*/
+
+	main_block->draw_ellipsoid(128,128,128,64,16,16,31);
+	main_block->draw_ellipsoid(128,128,128,16,64,16, 1);
+	main_block->draw_ellipsoid(128,128,128,16,16,64,25);
+
+	main_block->draw_ellipsoid(128,128,128,64,10,10,12);
+	main_block->draw_ellipsoid(128,128,128,10,64,10,18);
+	main_block->draw_ellipsoid(128,128,128,10,10,64,24);
+
+	main_block->draw_blockoid(100,156,100,156,100,156,0);
 	tock = Clock::now();
 
 	cout<< "-----------------" << endl;
