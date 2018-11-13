@@ -1,7 +1,9 @@
 # V2
 Second iteration of the voxel renderer
 
-![newest screenshot](http://i.imgur.com/O1tteao.png)
+![newest screenshot](http://i.imgur.com/xcoxc5o.png)
+
+![screenshot](http://i.imgur.com/O1tteao.png)
 
 ![screenshot](http://i.imgur.com/6HnP3Ic.png)
 
