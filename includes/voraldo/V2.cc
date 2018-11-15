@@ -1,14 +1,17 @@
 #include "../voraldo/V2.h"
 
 
-Block::Block(){
+Block::Block()
+{
 	data = NULL;  //declare with an empty block
 }	//call Block::init(int x, int y, int z) to populate it
 
 
-void Block::init(int x, int y, int z){
+void Block::init(int x, int y, int z)
+{
 
-	if(data != NULL){
+	if(data != NULL)
+	{
 		delete[] data;
 	}
 
@@ -20,27 +23,33 @@ void Block::init(int x, int y, int z){
 
 	data = new Vox[num_cells];
 
-	for(int i = 0; i < num_cells; i++){ //initialize arrays
+	for(int i = 0; i < num_cells; i++)
+	{ //initialize arrays
 
 		data[i].mask = false;
 
 
 		//this makes nice noise, it's from the first iteration.
 		int randcheck = rand()%696;
-		if(randcheck == 69){
+		if(randcheck == 69)
+		{
 			data[i].state = rand()%256;
-		}else{
+		}
+		else
+		{
 			data[i].state = 99;
 		}
 	}
 }
 
-Block::~Block(){
+Block::~Block()
+{
 	std::cout << "deleting block" << std::endl;
 	delete[] data;
 }
 
-void Block::set_data_by_3d_index(int x,int y,int z,int set){
+void Block::set_data_by_3d_index(int x,int y,int z,int set)
+{
 
 	//validate the input - make sure you are in the block
 	bool x_valid = x < x_res && x >= 0;
@@ -50,14 +59,21 @@ void Block::set_data_by_3d_index(int x,int y,int z,int set){
 	bool masked = data[get_array_index_by_xyz(x,y,z)].mask;
 
 	//all dimensions valid, do as the user asks
-	if(x_valid && y_valid && z_valid && !masked){
-		if(set <= 255){
+	if(x_valid && y_valid && z_valid && !masked)
+	{
+		if(set <= 255)
+		{
 			data[get_array_index_by_xyz(x,y,z)].state = set;
-		}else{
+		}
+		else
+		{
 			data[get_array_index_by_xyz(x,y,z)].state = 255;
 		}
-	}else{
-		if(!masked){
+	}
+	else
+	{
+		if(!masked)
+		{
 			std::cout << std::endl << "Invalid index for set_data_by_index()" << std::endl;
 
 			std::cout << "you used " << std::to_string(x) << " for x which should be between 0 and ";
@@ -68,7 +84,9 @@ void Block::set_data_by_3d_index(int x,int y,int z,int set){
 
 			std::cout << "you used " << std::to_string(z) << " for z which should be between 0 and ";
 			std::cout << std::to_string(z_res) << std::endl;
-		}else{
+		}
+		else
+		{
 			std::cout << "Cell " 
 				<< std::to_string(x) << " " 
 				<< std::to_string(y) << " " 
@@ -79,16 +97,20 @@ void Block::set_data_by_3d_index(int x,int y,int z,int set){
 	return;
 }
 
-Vox Block::get_data_by_3d_index(int x,int y,int z){
+Vox Block::get_data_by_3d_index(int x,int y,int z)
+{
 
 	//validate the input
 	bool x_valid = x < x_res && x >= 0;
 	bool y_valid = y < y_res && y >= 0;
 	bool z_valid = z < z_res && z >= 0;
 
-	if(x_valid && y_valid && z_valid){
+	if(x_valid && y_valid && z_valid)
+	{
 		return(data[get_array_index_by_xyz(x,y,z)]); //grab the data from the long 1d array
-	}else{
+	}
+	else
+	{
 		std::cout << std::endl << "Invalid index for get_data_by_3d_index()" << std::endl;
 
 		Vox temp = {0,false};
@@ -99,29 +121,58 @@ Vox Block::get_data_by_3d_index(int x,int y,int z){
 
 
 //Implementing this as a separate function keeps the logic more intact, I think
-int Block::get_array_index_by_xyz(int x, int y, int z){
+int Block::get_array_index_by_xyz(int x, int y, int z)
+{
 	return z*(y_res*x_res) + y*(x_res) + x; //this mapping was figured out on paper, but can be 
 }	//described pretty succinctly - the z dimension is like pages, each of dimension x * y, then
 	//the y dimension is like rows, each of dimension x, and the x dimension is the location 
 	//within the row that has been specified by the z and y coordinates.
 
 
-Voraldo::Voraldo(){
+/*
+
+Conditional Operator (inline if statment)
+-----------------------------------------
+
+x ? y : z
+
+works like
+
+if(x) y else z
+
+
+
+Just a note, this:
+------------------
+
+a = x ? : y;
+
+is the same as:
+
+a = x ? x : y;
+
+*/
+
+Voraldo::Voraldo()
+{
 
 }
 
-Voraldo::Voraldo(int x, int y, int z){
+Voraldo::Voraldo(int x, int y, int z)
+{
 	Vblock = new Block;
 	Vblock->init(x,y,z);
 }
 
 
-Voraldo::~Voraldo(){
+Voraldo::~Voraldo()
+{
 	std::cout << "deleting voraldo object" << std::endl; 
 	delete Vblock;
 }
 
-void Voraldo::display(){
+void Voraldo::display()
+{
 
 	double y_upper = -1.618;
 
@@ -218,11 +269,15 @@ void Voraldo::display(){
 
 	Palette_return_object c;
 
-	for(int x = 0; x < Vblock->get_x_res(); x++){
-		for(int y = 0; y < Vblock->get_y_res(); y++){
-			for(int z = 0; z < Vblock->get_z_res(); z++){
+	for(int x = 0; x < Vblock->get_x_res(); x++)
+	{
+		for(int y = 0; y < Vblock->get_y_res(); y++)
+		{
+			for(int z = 0; z < Vblock->get_z_res(); z++)
+			{
 				state = Vblock->get_data_by_3d_index(x,y,z).state;
-				for(int w = 0; w <= 8; w++){
+				for(int w = 0; w <= 8; w++)
+				{
 
 					curr_x = int(floor(centers[w][0]+x*center_x_vecs[w][0]+y*center_y_vecs[w][0]+z*center_z_vecs[w][0]));
 					curr_y = int(floor(centers[w][1]+x*center_x_vecs[w][1]+y*center_y_vecs[w][1]+z*center_z_vecs[w][1]));
@@ -252,7 +307,8 @@ void Voraldo::display(){
 	img.save_bmp("output.bmp");
 }
 
-Palette::Palette(){
+Palette::Palette()
+{
 
 	color_map_setup();
 
@@ -270,7 +326,8 @@ Palette::Palette(){
 
 }
 
-void Palette::color_map_setup(){
+void Palette::color_map_setup()
+{
 	RGB black = {0,0,0};
 	color_map["black"] = black;
 
@@ -332,13 +389,24 @@ void Palette::color_map_setup(){
 	color_map["gold"] = gold;
 }
 
+void Palette::set_palette_to_state(int state)
+{
+	switch(state)
+	{
+		default:
+		break;
+	}
+}
 
 
-Palette_return_object Voraldo::get_palette_for_state(int state){
+
+Palette_return_object Voraldo::get_palette_for_state(int state)
+{
 	return (pal.return_object);
 }
 
-void Voraldo::save_block_to_file(){
+void Voraldo::save_block_to_file()
+{
 	//produce the JSON file "default.txt"
 	nlohmann::json j;
 	std::string filename = "save/default.txt"; 
@@ -381,8 +449,10 @@ void Voraldo::save_block_to_file(){
 
 	int index = 0;
 
-	for (int y = 0; y < imagey; y++){
-		for (int x = 0; x < imagex; x++){
+	for (int y = 0; y < imagey; y++)
+	{
+		for (int x = 0; x < imagex; x++)
+		{
 
 			//can get away with a 2d array, on account of it being a 2d image
 			//with a lot of rows. The format is very compatible with the 1d
@@ -391,7 +461,8 @@ void Voraldo::save_block_to_file(){
 			//top to bottom.
 
 			int temp_state = int(Vblock->get_data_by_array_index(index).state);
-			switch(temp_state){
+			switch(temp_state)
+			{
 				case 0:
 					img.draw_point(x,y,c0);
 					break;
@@ -413,7 +484,8 @@ void Voraldo::save_block_to_file(){
 
 }
 
-void Voraldo::load_block_from_file(){
+void Voraldo::load_block_from_file()
+{
 
 	//this needs to delete any existing data and make new data from the file
 
@@ -450,11 +522,13 @@ void Voraldo::load_block_from_file(){
 
 }
 
-void Voraldo::draw_point(int x, int y, int z, int state){
+void Voraldo::draw_point(int x, int y, int z, int state)
+{
 	Vblock->set_data_by_3d_index(x,y,z,state);
 }
 
-void Voraldo::draw_line_segment(vec v1, vec v2, int state){
+void Voraldo::draw_line_segment(vec v1, vec v2, int state)
+{
 
 	vec starting_point = v1;
 	vec current_point = starting_point;
@@ -462,7 +536,8 @@ void Voraldo::draw_line_segment(vec v1, vec v2, int state){
 
 	int length = std::floor(linalg::length(line_vector));
 
-	for(int i = 0; i < length; i++){
+	for(int i = 0; i < length; i++)
+	{
 		current_point[0] = starting_point[0] + i*(line_vector[0]/length);
 		current_point[1] = starting_point[1] + i*(line_vector[1]/length);
 		current_point[2] = starting_point[2] + i*(line_vector[2]/length);
@@ -471,7 +546,8 @@ void Voraldo::draw_line_segment(vec v1, vec v2, int state){
 }
 
 
-void Voraldo::draw_triangle(vec v0, vec v1, vec v2, int state){
+void Voraldo::draw_triangle(vec v0, vec v1, vec v2, int state)
+{
 	//point zero is the origin point
 
 	vec side1 = v1-v0;
@@ -482,9 +558,12 @@ void Voraldo::draw_triangle(vec v0, vec v1, vec v2, int state){
 
 	double length;
 
-	if(linalg::length(side1) > linalg::length(side2)){
+	if(linalg::length(side1) > linalg::length(side2))
+	{
 		length = std::floor(linalg::length(side1));
-	}else{
+	}
+	else
+	{
 		length = std::floor(linalg::length(side2));
 	}
 
@@ -497,7 +576,8 @@ void Voraldo::draw_triangle(vec v0, vec v1, vec v2, int state){
 		side1 = side1/length;
 		side2 = side2/length;
 
-		for(int i = 0; i < length; i++){
+		for(int i = 0; i < length; i++)
+		{
 			c1[0] = v0[0] + i*side1[0];
 			c1[1] = v0[1] + i*side1[1];
 			c1[2] = v0[2] + i*side1[2];
@@ -512,15 +592,20 @@ void Voraldo::draw_triangle(vec v0, vec v1, vec v2, int state){
 
 }
 
-void Voraldo::draw_sphere(int x, int y, int z, int radius, int state){
-	for(int i = 0; i < Vblock->get_x_res(); i++){	
-		for(int j = 0; j < Vblock->get_y_res(); j++){
-			for(int k = 0; k < Vblock->get_z_res(); k++){
+void Voraldo::draw_sphere(int x, int y, int z, int radius, int state)
+{
+	for(int i = 0; i < Vblock->get_x_res(); i++)
+	{	
+		for(int j = 0; j < Vblock->get_y_res(); j++)
+		{
+			for(int k = 0; k < Vblock->get_z_res(); k++)
+			{
 				double testx = (i-x)*(i-x);	//apply offsets and square
 				double testy = (j-y)*(j-y);
 				double testz = (k-z)*(k-z);
 
-				if((testx + testy + testz) < radius*radius){	//pretty self explainatory, equation of sphere
+				if((testx + testy + testz) < radius*radius)
+				{	//pretty self explainatory, equation of sphere
 					Vblock->set_data_by_3d_index(i,j,k,state);
 				}
 			}
@@ -528,10 +613,14 @@ void Voraldo::draw_sphere(int x, int y, int z, int radius, int state){
 	}
 }
 
-void Voraldo::draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state){
-	for(int i = 0; i < Vblock->get_x_res(); i++){	
-		for(int j = 0; j < Vblock->get_y_res(); j++){
-			for(int k = 0; k < Vblock->get_z_res(); k++){
+void Voraldo::draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state)
+{
+	for(int i = 0; i < Vblock->get_x_res(); i++)
+	{	
+		for(int j = 0; j < Vblock->get_y_res(); j++)
+		{
+			for(int k = 0; k < Vblock->get_z_res(); k++)
+			{
 				double testx = (i-x)*(i-x);	//apply offsets and square
 				double testy = (j-y)*(j-y);
 				double testz = (k-z)*(k-z);
@@ -551,14 +640,19 @@ void Voraldo::draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, 
 	}
 }
 
-void Voraldo::draw_cylinder(){
+void Voraldo::draw_cylinder()
+{
 
 }
 
-void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, int state){
-	for(int i = 0; i < Vblock->get_x_res(); i++){	
-		for(int j = 0; j < Vblock->get_y_res(); j++){
-			for(int k = 0; k < Vblock->get_z_res(); k++){
+void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, int state)
+{
+	for(int i = 0; i < Vblock->get_x_res(); i++)
+	{	
+		for(int j = 0; j < Vblock->get_y_res(); j++)
+		{
+			for(int k = 0; k < Vblock->get_z_res(); k++)
+			{
 
 				bool xtest = i <= xmax && i >= xmin;
 				bool ytest = j <= ymax && j >= ymin;
@@ -570,4 +664,100 @@ void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, in
 			}
 		}
 	}
+}
+
+void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, vec f, vec g, vec h, int state)
+{
+	vec center = a + b + c + d + e + f + g + h;
+	center = vec(center[0]/8, center[1]/8, center[2]/8);
+
+	bool plusx1 = false;
+	bool plusx2 = false;
+
+//    888   Y88b  /  
+//  __888__  Y88b/   
+//    888     Y88b   
+//    888     /Y88b  
+//           /  Y88b 
+
+	//CDGH
+
+	//TRIANGLES ARE CDH, CGH
+
+
+	bool minusx1 = false;
+	bool minusx2 = false;
+         
+//       Y88b  /     
+//  ____  Y88b/      
+//         Y88b      
+//         /Y88b     
+//        /  Y88b    
+
+	//ABEF
+
+	//TRIANGLES ARE ABF, AEF
+
+
+	bool plusy1 = false;
+	bool plusy2 = false;
+
+//    888   Y88b  /  
+//  __888__  Y888/   
+//    888     Y8/    
+//    888      Y     
+//            /      
+//          _/       
+
+	//ACEG
+
+	//TRIANGLES ARE ACG, AEG
+
+	bool minusy1 = false;
+	bool minusy2 = false;
+        
+//       Y88b  /     
+//  ____  Y888/      
+//         Y8/       
+//          Y        
+//         /         
+//       _/          
+
+	//BDFH
+
+	//TRIANGLES ARE BDH, BFH
+
+	bool plusz1 = false;
+	bool plusz2 = false;
+
+  
+//    888    ~~~d88P 
+//  __888__    d88P  
+//    888     d88P   
+//    888    d88P    
+//          d88P___  
+
+	//ABCD
+
+	//TRIANGLES ARE ABD, ACD
+
+	bool minusz1 = false;
+	bool minusz2 = false;
+
+//        ~~~d88P    
+//  ____    d88P     
+//         d88P      
+//        d88P       
+//       d88P___ 
+
+	//EFGH
+
+	//TRIANGLES ARE EFH, EGH
+
+}
+
+
+bool planetest(vec plane_point, vec plane_normal, vec test_point)
+{
+
 }

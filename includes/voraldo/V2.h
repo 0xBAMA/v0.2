@@ -149,7 +149,8 @@ struct Palette_return_object{
 	bool draw_second_circle;
 };
 
-class Palette{
+class Palette
+{
 public:
 	Palette();
 
@@ -157,51 +158,7 @@ public:
 
 	std::map<std::string, RGB> color_map;
 	void color_map_setup();
-
-	static const int VORALDO_TEST_STATE_EMPTY = 0;
-
-	static const int VORALDO_TEST_STATE_WHITE_LEVEL0 = 1;
-	static const int VORALDO_TEST_STATE_WHITE_LEVEL1 = 2;
-	static const int VORALDO_TEST_STATE_WHITE_LEVEL2 = 3;
-	static const int VORALDO_TEST_STATE_WHITE_LEVEL3 = 4;
-	static const int VORALDO_TEST_STATE_WHITE_LEVEL4 = 5;
-	static const int VORALDO_TEST_STATE_WHITE_LEVEL5 = 6;
-
-	static const int VORALDO_TEST_STATE_BRIGHT_RED_LEVEL0 = 7;
-	static const int VORALDO_TEST_STATE_BRIGHT_RED_LEVEL1 = 8;
-	static const int VORALDO_TEST_STATE_BRIGHT_RED_LEVEL2 = 9;
-	static const int VORALDO_TEST_STATE_BRIGHT_RED_LEVEL3 = 10;
-	static const int VORALDO_TEST_STATE_BRIGHT_RED_LEVEL4 = 11;
-	static const int VORALDO_TEST_STATE_BRIGHT_RED_LEVEL5 = 12;
-
-	static const int VORALDO_TEST_STATE_BRIGHT_GREEN_LEVEL0 = 13;
-	static const int VORALDO_TEST_STATE_BRIGHT_GREEN_LEVEL1 = 14;
-	static const int VORALDO_TEST_STATE_BRIGHT_GREEN_LEVEL2 = 15;
-	static const int VORALDO_TEST_STATE_BRIGHT_GREEN_LEVEL3 = 16;
-	static const int VORALDO_TEST_STATE_BRIGHT_GREEN_LEVEL4 = 17;
-	static const int VORALDO_TEST_STATE_BRIGHT_GREEN_LEVEL5 = 18;
-
-	static const int VORALDO_TEST_STATE_BRIGHT_BLUE_LEVEL0 = 19;
-	static const int VORALDO_TEST_STATE_BRIGHT_BLUE_LEVEL1 = 20;
-	static const int VORALDO_TEST_STATE_BRIGHT_BLUE_LEVEL2 = 21;
-	static const int VORALDO_TEST_STATE_BRIGHT_BLUE_LEVEL3 = 22;
-	static const int VORALDO_TEST_STATE_BRIGHT_BLUE_LEVEL4 = 23;
-	static const int VORALDO_TEST_STATE_BRIGHT_BLUE_LEVEL5 = 24;
-
-	static const int VORALDO_TEST_STATE_BLACK_LEVEL0 = 25;
-	static const int VORALDO_TEST_STATE_BLACK_LEVEL1 = 26;
-	static const int VORALDO_TEST_STATE_BLACK_LEVEL2 = 27;
-	static const int VORALDO_TEST_STATE_BLACK_LEVEL3 = 28;
-	static const int VORALDO_TEST_STATE_BLACK_LEVEL4 = 29;
-	static const int VORALDO_TEST_STATE_BLACK_LEVEL5 = 30;
-
-	static const int VORALDO_TEST_STATE_GOLD_LEVEL0 = 31;
-	static const int VORALDO_TEST_STATE_GOLD_LEVEL1 = 32;
-	static const int VORALDO_TEST_STATE_GOLD_LEVEL2 = 33;
-	static const int VORALDO_TEST_STATE_GOLD_LEVEL3 = 34;
-	static const int VORALDO_TEST_STATE_GOLD_LEVEL4 = 35;
-	static const int VORALDO_TEST_STATE_GOLD_LEVEL5 = 36;
-
+	void set_return_object_to_state(int state);
 
 };
 
@@ -253,11 +210,13 @@ public:
 	void draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state);
 	void draw_cylinder();
 	void draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, int state);
-
+	void draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, vec f, vec g, vec h, int state);
 
 private:
 
 	Block* Vblock;
 	Palette pal;
+
+	bool planetest(vec plane_point, vec plane_normal, vec test_point);
 
 };
