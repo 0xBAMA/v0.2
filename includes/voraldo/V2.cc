@@ -1,12 +1,6 @@
 #include "../voraldo/V2.h"
 
 
-Block::Block()
-{
-	data = NULL;  //declare with an empty block
-}	//call Block::init(int x, int y, int z) to populate it
-
-
 void Block::init(int x, int y, int z)
 {
 
@@ -30,26 +24,24 @@ void Block::init(int x, int y, int z)
 
 
 		//this makes nice noise, it's from the first iteration.
-		int randcheck = rand()%696;
+		int randcheck = std::rand()%696;
 		if(randcheck == 69)
 		{
-			data[i].state = rand()%256;
+			int s = rand()%256;
+			data[i].color = get_RGB_for_state(s%16);
+			data[i].size = std::rand()%3 ? 1:2;
+				//randomly choose whether it gets alpha - weighted towards not
 		}
 		else
 		{
-			data[i].state = 99;
+			data[i].size = 0;
 		}
 	}
 }
 
-Block::~Block()
-{
-	std::cout << "deleting block" << std::endl;
-	delete[] data;
-}
 
-void Block::set_data_by_3d_index(int x,int y,int z,int set)
-{
+
+void Block::set_data_by_3d_index(int x,int y,int z,Vox set){
 
 	//validate the input - make sure you are in the block
 	bool x_valid = x < x_res && x >= 0;
@@ -61,13 +53,13 @@ void Block::set_data_by_3d_index(int x,int y,int z,int set)
 	//all dimensions valid, do as the user asks
 	if(x_valid && y_valid && z_valid && !masked)
 	{
-		if(set <= 255)
+		if(set.color.red <= 255&&set.color.green <= 255&&set.color.blue <= 255)
 		{
-			data[get_array_index_by_xyz(x,y,z)].state = set;
+			data[get_array_index_by_xyz(x,y,z)] = set;
 		}
 		else
 		{
-			data[get_array_index_by_xyz(x,y,z)].state = 255;
+			data[get_array_index_by_xyz(x,y,z)].color = get_RGB_for_state(std::rand()%16);
 		}
 	}
 	else
@@ -265,9 +257,8 @@ void Voraldo::display()
 	int curr_x = 0;
 	int curr_y = 0;
 
-	int state = 0;
-
-	Palette_return_object c;
+	RGB color;
+	unsigned char size = 0;
 
 	for(int x = 0; x < Vblock->get_x_res(); x++)
 	{
@@ -275,30 +266,48 @@ void Voraldo::display()
 		{
 			for(int z = 0; z < Vblock->get_z_res(); z++)
 			{
-				state = Vblock->get_data_by_3d_index(x,y,z).state;
+				color = Vblock->get_data_by_3d_index(x,y,z).color;
+				size = Vblock->get_data_by_3d_index(x,y,z).size;
 				for(int w = 0; w <= 8; w++)
-				{
+				{	
+					unsigned char color_char[3] = {color.red,color.green,color.blue};
 
 					curr_x = int(floor(centers[w][0]+x*center_x_vecs[w][0]+y*center_y_vecs[w][0]+z*center_z_vecs[w][0]));
 					curr_y = int(floor(centers[w][1]+x*center_x_vecs[w][1]+y*center_y_vecs[w][1]+z*center_z_vecs[w][1]));
 
-					c = get_palette_for_state(state);
-
-					unsigned char point_color[3] = {c.point_color.red,c.point_color.green,c.point_color.blue};
-					unsigned char first_circle_color[3] = {c.first_circle_color.red,c.first_circle_color.green,c.first_circle_color.blue};
-					unsigned char second_circle_color[3] = {c.second_circle_color.red,c.second_circle_color.green,c.second_circle_color.blue};
-
-					if(c.draw_second_circle){
-						img.draw_circle(curr_x,curr_y,c.second_circle_radius,second_circle_color,c.second_circle_alpha);
+					switch(size)
+					{	
+						case 1://point with alpha
+							img.draw_point(curr_x,curr_y,color_char,0.3);
+							break;
+						case 2://point without alpha
+							img.draw_point(curr_x,curr_y,color_char,1.0);
+							break;
+						case 3://size two with alpha
+							img.draw_circle(curr_x,curr_y,1,color_char,0.3);
+							break;
+						case 4://size two without alpha
+							img.draw_circle(curr_x,curr_y,1,color_char,1.0);
+							break;
+						default://do not draw;
+							break;
 					}
 
-					if(c.draw_first_circle){
-						img.draw_circle(curr_x,curr_y,c.first_circle_radius,first_circle_color,c.first_circle_alpha);
-					}
+					// unsigned char point_color[3] = {c.point_color.red,c.point_color.green,c.point_color.blue};
+					// unsigned char first_circle_color[3] = {c.first_circle_color.red,c.first_circle_color.green,c.first_circle_color.blue};
+					// unsigned char second_circle_color[3] = {c.second_circle_color.red,c.second_circle_color.green,c.second_circle_color.blue};
 
-					if(c.draw_point){
-						img.draw_point(curr_x,curr_y,point_color,c.point_alpha);
-					}
+					// if(c.draw_second_circle){
+					// 	img.draw_circle(curr_x,curr_y,c.second_circle_radius,second_circle_color,c.second_circle_alpha);
+					// }
+
+					// if(c.draw_first_circle){
+					// 	img.draw_circle(curr_x,curr_y,c.first_circle_radius,first_circle_color,c.first_circle_alpha);
+					// }
+
+					// if(c.draw_point){
+					// 	img.draw_point(curr_x,curr_y,point_color,c.point_alpha);
+					// }
 				}
 			}
 		}
@@ -307,103 +316,7 @@ void Voraldo::display()
 	img.save_bmp("output.bmp");
 }
 
-Palette::Palette()
-{
 
-	color_map_setup();
-
-	return_object.point_color = Palette::color_map.at("black");
-	return_object.point_alpha = 0.0;
-	return_object.draw_point = false;
-	return_object.first_circle_color = Palette::color_map.at("black");
-	return_object.first_circle_radius = 0;
-	return_object.first_circle_alpha = 0.0;
-	return_object.draw_first_circle = false;
-	return_object.second_circle_color = Palette::color_map.at("black");
-	return_object.second_circle_radius = 0;
-	return_object.second_circle_alpha = 0.0;
-	return_object.draw_second_circle = false;
-
-}
-
-void Palette::color_map_setup()
-{
-	RGB black = {0,0,0};
-	color_map["black"] = black;
-
-	RGB white = {255,255,255};
-	color_map["white"] = white;
-
-	RGB bright_red = {255,0,0};
-	color_map["bright_red"] = bright_red;
-
-	RGB bright_green = {0,255,0};
-	color_map["bright_green"] = bright_green;
-
-	RGB bright_blue = {0,0,255};
-	color_map["bright_blue"] = bright_blue;
-
-	RGB bright_cyan = {0,255,255};
-	color_map["bright_cyan"] = bright_cyan;
-
-	RGB bright_magenta = {255,0,255};
-	color_map["bright_magenta"] = bright_magenta;
-
-	RGB bright_yellow = {255,255,0};
-	color_map["bright_yellow"] = bright_yellow;
-
-	RGB maroon = {128,0,0};
-	color_map["maroon"] = maroon;
-
-	RGB olive = {128,128,0};	
-	color_map["olive"] = olive;
-
-	RGB green = {0,128,0};
-	color_map["green"] = green;
-
-	RGB purple = {128,0,128};
-	color_map["purple"] = purple;
-
-	RGB teal = {0,128,128};
-	color_map["teal"] = teal;
-
-	RGB navy = {0,0,128};
-	color_map["navy"] = navy;
-
-	RGB coral = {255,127,80};
-	color_map["coral"] = coral;
-
-	RGB tomato = {255,99,71};
-	color_map["tomato"] = tomato;
-
-	RGB salmon = {250,128,114};
-	color_map["salmon"] = salmon;
-
-	RGB orange = {255,165,0};
-	color_map["orange"] = orange;
-
-	RGB dark_orange = {255,140,0};
-	color_map["dark_orange"] = dark_orange;
-
-	RGB gold = {255,215,0};
-	color_map["gold"] = gold;
-}
-
-void Palette::set_palette_to_state(int state)
-{
-	switch(state)
-	{
-		default:
-		break;
-	}
-}
-
-
-
-Palette_return_object Voraldo::get_palette_for_state(int state)
-{
-	return (pal.return_object);
-}
 
 void Voraldo::save_block_to_file()
 {
@@ -436,7 +349,7 @@ void Voraldo::save_block_to_file()
 	int imagex = Vblock->get_x_res();
 	int imagey = Vblock->get_y_res()*Vblock->get_z_res();
 
-	CImg<unsigned char> img(imagex,imagey,1,3,128);  
+	CImg<unsigned char> img(imagex,imagey,1,3,0);  
 	//declare image with one color per pixel, one channel. 
 	//full of 128 values, the dimensions are x = x-res, y = y-res*z-res
 
@@ -460,21 +373,34 @@ void Voraldo::save_block_to_file()
 			//same general order as you would read text, left to right and
 			//top to bottom.
 
-			int temp_state = int(Vblock->get_data_by_array_index(index).state);
-			switch(temp_state)
+			RGB temp = Vblock->get_data_by_array_index(index).color;
+
+			unsigned char color[3] = {temp.red,temp.blue,temp.green};
+			unsigned char black[3] = {0,0,0};
+
+			if(color == black)
 			{
-				case 0:
-					img.draw_point(x,y,c0);
-					break;
-				case 1:
-					img.draw_point(x,y,c1);
-					break;
-				case 17:
-					img.draw_point(x,y,c17);
-					break;
-				default:
-					break;
+
 			}
+			else
+			{
+				img.draw_point(x,y,color);
+			}
+
+			// switch(temp_state)
+			// {
+			// 	case 0:
+			// 		img.draw_point(x,y,c0);
+			// 		break;
+			// 	case 1:
+			// 		img.draw_point(x,y,c1);
+			// 		break;
+			// 	case 17:
+			// 		img.draw_point(x,y,c17);
+			// 		break;
+			// 	default:
+			// 		break;
+			// }
 
 			index++;
 		}
@@ -522,12 +448,12 @@ void Voraldo::load_block_from_file()
 
 }
 
-void Voraldo::draw_point(int x, int y, int z, int state)
+void Voraldo::draw_point(int x, int y, int z, Vox state)
 {
 	Vblock->set_data_by_3d_index(x,y,z,state);
 }
 
-void Voraldo::draw_line_segment(vec v1, vec v2, int state)
+void Voraldo::draw_line_segment(vec v1, vec v2, Vox state)
 {
 
 	vec starting_point = v1;
@@ -546,7 +472,7 @@ void Voraldo::draw_line_segment(vec v1, vec v2, int state)
 }
 
 
-void Voraldo::draw_triangle(vec v0, vec v1, vec v2, int state)
+void Voraldo::draw_triangle(vec v0, vec v1, vec v2, Vox state)
 {
 	//point zero is the origin point
 
@@ -592,7 +518,7 @@ void Voraldo::draw_triangle(vec v0, vec v1, vec v2, int state)
 
 }
 
-void Voraldo::draw_sphere(int x, int y, int z, int radius, int state)
+void Voraldo::draw_sphere(int x, int y, int z, int radius, Vox state)
 {
 	for(int i = 0; i < Vblock->get_x_res(); i++)
 	{	
@@ -613,7 +539,7 @@ void Voraldo::draw_sphere(int x, int y, int z, int radius, int state)
 	}
 }
 
-void Voraldo::draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, int state)
+void Voraldo::draw_ellipsoid(int x, int y, int z, int xrad, int yrad, int zrad, Vox state)
 {
 	for(int i = 0; i < Vblock->get_x_res(); i++)
 	{	
@@ -645,7 +571,7 @@ void Voraldo::draw_cylinder()
 
 }
 
-void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, int state)
+void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, Vox state)
 {
 	for(int i = 0; i < Vblock->get_x_res(); i++)
 	{	
@@ -666,7 +592,7 @@ void Voraldo::draw_blockoid(int xmin, int xmax, int ymin, int ymax, int zmin, in
 	}
 }
 
-void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, vec f, vec g, vec h, int state)
+void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, vec f, vec g, vec h, Vox state)
 {
 	vec center = a + b + c + d + e + f + g + h;
 	center = vec(center[0]/8, center[1]/8, center[2]/8);
@@ -684,6 +610,30 @@ void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, v
 
 	//TRIANGLES ARE CDH, CGH
 
+	vec plusx_side1 = vec(c[0]-d[0],c[1]-d[1],c[2]-d[2]);
+	vec plusx_side2 = vec(h[0]-d[0],h[1]-d[1],h[2]-d[2]);
+
+	vec plusx_side3 = vec(c[0]-g[0],c[1]-g[1],c[2]-g[2]);
+	vec plusx_side4 = vec(h[0]-g[0],h[1]-g[1],h[2]-g[2]);
+
+	vec plusx_planevec1 = cross(plusx_side1,plusx_side2);
+	vec plusx_planept1 = d;
+
+	vec plusx_planevec2 = cross(plusx_side3,plusx_side4);
+	vec plusx_planept2 = g;
+
+	if(!planetest(plusx_planept1,plusx_planevec1,center))
+	{	//if the center fails the plane test, flip the normal
+		plusx_planevec1 = vec(-1*plusx_planevec1[0],-1*plusx_planevec1[1],-1*plusx_planevec1[2]);
+	}
+
+	if(!planetest(plusx_planept2,plusx_planevec2,center))
+	{	//if the center fails the plane test, flip the normal
+		plusx_planevec2 = vec(-1*plusx_planevec2[0],-1*plusx_planevec2[1],-1*plusx_planevec2[2]);
+	}
+
+//-------------------------------------------
+
 
 	bool minusx1 = false;
 	bool minusx2 = false;
@@ -697,6 +647,30 @@ void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, v
 	//ABEF
 
 	//TRIANGLES ARE ABF, AEF
+
+	vec minusx_side1 = vec(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+	vec minusx_side2 = vec(f[0]-b[0],f[1]-b[1],f[2]-b[2]);
+
+	vec minusx_side3 = vec(a[0]-e[0],a[1]-e[1],a[2]-e[2]);
+	vec minusx_side4 = vec(f[0]-e[0],f[1]-e[1],f[2]-e[2]);
+
+	vec minusx_planevec1 = cross(minusx_side1,minusx_side2);
+	vec minusx_planept1 = b;
+
+	vec minusx_planevec2 = cross(minusx_side3,minusx_side4);
+	vec minusx_planept2 = e;
+
+	if(!planetest(minusx_planept1,minusx_planevec1,center))
+	{	//if the center fails the plane test, flip the normal
+		minusx_planevec1 = vec(-1*minusx_planevec1[0],-1*minusx_planevec1[1],-1*minusx_planevec1[2]);
+	}
+
+	if(!planetest(minusx_planept2,minusx_planevec2,center))
+	{	//if the center fails the plane test, flip the normal
+		minusx_planevec2 = vec(-1*minusx_planevec2[0],-1*minusx_planevec2[1],-1*minusx_planevec2[2]);
+	}
+
+//-------------------------------------------
 
 
 	bool plusy1 = false;
@@ -713,6 +687,31 @@ void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, v
 
 	//TRIANGLES ARE ACG, AEG
 
+	vec plusy_side1 = vec(a[0]-c[0],a[1]-c[1],a[2]-c[2]);
+	vec plusy_side2 = vec(g[0]-c[0],g[1]-c[1],g[2]-c[2]);
+
+	vec plusy_side3 = vec(a[0]-e[0],a[1]-e[1],a[2]-e[2]);
+	vec plusy_side4 = vec(g[0]-e[0],g[1]-e[1],g[2]-e[2]);
+
+	vec plusy_planevec1 = cross(plusy_side1,plusy_side2);
+	vec plusy_planept1 = c;
+
+	vec plusy_planevec2 = cross(plusy_side3,plusy_side4);
+	vec plusy_planept2 = e;
+
+	if(!planetest(plusy_planept1,plusy_planevec1,center))
+	{	//if the center fails the plane test, flip the normal
+		plusy_planevec1 = vec(-1*plusy_planevec1[0],-1*plusy_planevec1[1],-1*plusy_planevec1[2]);
+	}
+
+	if(!planetest(plusy_planept2,plusy_planevec2,center))
+	{	//if the center fails the plane test, flip the normal
+		plusy_planevec2 = vec(-1*plusy_planevec2[0],-1*plusy_planevec2[1],-1*plusy_planevec2[2]);
+	}
+
+//-------------------------------------------
+
+
 	bool minusy1 = false;
 	bool minusy2 = false;
         
@@ -726,6 +725,31 @@ void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, v
 	//BDFH
 
 	//TRIANGLES ARE BDH, BFH
+	vec minusy_side1 = vec(b[0]-d[0],b[1]-d[1],b[2]-d[2]);
+	vec minusy_side2 = vec(h[0]-d[0],h[1]-d[1],h[2]-d[2]);
+
+	vec minusy_side3 = vec(b[0]-f[0],b[1]-f[1],b[2]-f[2]);
+	vec minusy_side4 = vec(h[0]-f[0],h[1]-f[1],h[2]-f[2]);
+
+	vec minusy_planevec1 = cross(minusy_side1,minusy_side2);
+	vec minusy_planept1 = d;
+
+	vec minusy_planevec2 = cross(minusy_side3,minusy_side4);
+	vec minusy_planept2 = f;
+
+	if(!planetest(minusy_planept1,minusy_planevec1,center))
+	{	//if the center fails the plane test, flip the normal
+		minusy_planevec1 = vec(-1*minusy_planevec1[0],-1*minusy_planevec1[1],-1*minusy_planevec1[2]);
+	}
+
+	if(!planetest(minusy_planept2,minusy_planevec2,center))
+	{	//if the center fails the plane test, flip the normal
+		minusy_planevec2 = vec(-1*minusy_planevec2[0],-1*minusy_planevec2[1],-1*minusy_planevec2[2]);
+	}
+
+
+//-------------------------------------------
+
 
 	bool plusz1 = false;
 	bool plusz2 = false;
@@ -741,6 +765,31 @@ void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, v
 
 	//TRIANGLES ARE ABD, ACD
 
+	vec plusz_side1 = vec(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+	vec plusz_side2 = vec(d[0]-b[0],d[1]-b[1],d[2]-b[2]);
+
+	vec plusz_side3 = vec(a[0]-c[0],a[1]-c[1],a[2]-c[2]);
+	vec plusz_side4 = vec(d[0]-c[0],d[1]-c[1],d[2]-c[2]);
+
+	vec plusz_planevec1 = cross(plusz_side1,plusz_side2);
+	vec plusz_planept1 = b;
+
+	vec plusz_planevec2 = cross(plusz_side3,plusz_side4);
+	vec plusz_planept2 = c;
+
+	if(!planetest(plusz_planept1,plusz_planevec1,center))
+	{	//if the center fails the plane test, flip the normal
+		plusz_planevec1 = vec(-1*plusz_planevec1[0],-1*plusz_planevec1[1],-1*plusz_planevec1[2]);
+	}
+
+	if(!planetest(plusz_planept2,plusz_planevec2,center))
+	{	//if the center fails the plane test, flip the normal
+		plusz_planevec2 = vec(-1*plusz_planevec2[0],-1*plusz_planevec2[1],-1*plusz_planevec2[2]);
+	}
+
+//-------------------------------------------
+
+
 	bool minusz1 = false;
 	bool minusz2 = false;
 
@@ -753,11 +802,91 @@ void Voraldo::draw_quadrilateral_hexahedron(vec a, vec b, vec c, vec d, vec e, v
 	//EFGH
 
 	//TRIANGLES ARE EFH, EGH
+	vec minusz_side1 = vec(e[0]-f[0],e[1]-f[1],e[2]-f[2]);
+	vec minusz_side2 = vec(h[0]-f[0],h[1]-f[1],h[2]-f[2]);
 
+	vec minusz_side3 = vec(e[0]-g[0],e[1]-g[1],e[2]-g[2]);
+	vec minusz_side4 = vec(h[0]-g[0],h[1]-g[1],h[2]-g[2]);
+
+	vec minusz_planevec1 = cross(minusz_side1,minusz_side2);
+	vec minusz_planept1 = f;
+
+	vec minusz_planevec2 = cross(minusz_side3,minusz_side4);
+	vec minusz_planept2 = g;
+
+	if(!planetest(minusz_planept1,minusz_planevec1,center))
+	{	//if the center fails the plane test, flip the normal
+		minusz_planevec1 = vec(-1*minusz_planevec1[0],-1*minusz_planevec1[1],-1*minusz_planevec1[2]);
+	}
+
+	if(!planetest(minusz_planept2,minusz_planevec2,center))
+	{	//if the center fails the plane test, flip the normal
+		minusz_planevec2 = vec(-1*minusz_planevec2[0],-1*minusz_planevec2[1],-1*minusz_planevec2[2]);
+	}
+
+
+//-------------------------------------------
+
+//  ╔╦╗┌─┐┌─┐┌┬┐  ╦  ┌─┐┌─┐┌─┐
+//   ║ ├┤ └─┐ │   ║  │ ││ │├─┘
+//   ╩ └─┘└─┘ ┴   ╩═╝└─┘└─┘┴  
+
+	vec current;
+
+	for(int i = 0; i < Vblock->get_x_res(); i++)
+	{	
+		for(int j = 0; j < Vblock->get_y_res(); j++)
+		{
+			for(int k = 0; k < Vblock->get_z_res(); k++)
+			{
+
+				current = vec(i,j,k);
+
+				bool plusxtest = planetest(plusx_planept1,plusx_planevec1,current)&&planetest(plusx_planept2,plusx_planevec2,current);
+				bool minusxtest = planetest(minusx_planept1,minusx_planevec1,current)&&planetest(minusx_planept2,minusx_planevec2,current);
+				bool plusytest = planetest(plusy_planept1,plusy_planevec1,current)&&planetest(plusy_planept2,plusy_planevec2,current);
+				bool minusytest = planetest(minusy_planept1,minusy_planevec1,current)&&planetest(minusy_planept2,minusy_planevec2,current);
+				bool plusztest = planetest(plusz_planept1,plusz_planevec1,current)&&planetest(plusz_planept2,plusz_planevec2,current);
+				bool minusztest = planetest(minusz_planept1,minusz_planevec1,current)&&planetest(minusz_planept2,minusz_planevec2,current);
+
+				bool xtest = plusxtest&&minusxtest;
+				bool ytest = plusytest&&minusytest;
+				bool ztest = plusztest&&minusztest;
+				
+
+				if(xtest && ytest && ztest)
+				{
+					Vblock->set_data_by_3d_index(i,j,k,state);
+				}
+			}
+		}
+	}
 }
 
 
-bool planetest(vec plane_point, vec plane_normal, vec test_point)
-{
+bool Voraldo::planetest(vec plane_point, vec plane_normal, vec test_point)
+{//return false if the point is above the plane
+	//return true if the point is below the plane
 
+	double result = 0.0;
+
+	//equation of plane
+
+	// a (x-x1) + b (y-y1) + c (z-z1) = 0
+
+	double a = plane_normal[0];
+	double b = plane_normal[1];
+	double c = plane_normal[2];
+
+	double x1 = plane_point[0];
+	double y1 = plane_point[1];
+	double z1 = plane_point[2];
+
+	double x = test_point[0];
+	double y = test_point[1];
+	double z = test_point[2];
+
+	result = a * (x - x1) + b * (y - y1) + c * (z - z1);
+
+	return (result < 0)?true:false;
 }

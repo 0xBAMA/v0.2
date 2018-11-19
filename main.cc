@@ -50,6 +50,88 @@ int main(){
 
 	tick = Clock::now();
 
+	Vox  type0,  type1,  type2,  type3;
+	Vox  type4,  type5,  type6,  type7;
+	Vox  type8,  type9, type10, type11;
+	Vox type12, type13, type14, type15;
+	Vox type16;
+
+	type0.color = main_block->get_RGB_for_state(0);
+	type1.color = main_block->get_RGB_for_state(1);
+	type2.color = main_block->get_RGB_for_state(2);
+	type3.color = main_block->get_RGB_for_state(3);
+	type4.color = main_block->get_RGB_for_state(4);
+	type5.color = main_block->get_RGB_for_state(5);
+	type6.color = main_block->get_RGB_for_state(6);
+	type7.color = main_block->get_RGB_for_state(7);
+	type8.color = main_block->get_RGB_for_state(8);
+	type9.color = main_block->get_RGB_for_state(9);
+	type10.color = main_block->get_RGB_for_state(10);
+	type11.color = main_block->get_RGB_for_state(11);
+	type12.color = main_block->get_RGB_for_state(12);
+	type13.color = main_block->get_RGB_for_state(13);
+	type14.color = main_block->get_RGB_for_state(14);
+	type15.color = main_block->get_RGB_for_state(15);
+
+	type16.color = main_block->get_RGB_for_state(16);
+
+	type0.size = 1;
+	type1.size = 1;
+	type2.size = 1;
+	type3.size = 1;
+	type4.size = 1;
+	type5.size = 1;
+	type6.size = 1;
+	type7.size = 1;
+	type8.size = 1;
+	type9.size = 1;
+	type10.size = 1;
+	type11.size = 1;
+	type12.size = 1;
+	type13.size = 1;
+	type14.size = 1;
+	type15.size = 1;
+	type16.size = 0;
+
+
+	type0.mask = false;
+	type1.mask = false;
+	type2.mask = false;
+	type3.mask = false;
+	type4.mask = false;
+	type5.mask = false;
+	type6.mask = false;
+	type7.mask = false;
+	type8.mask = false;
+	type9.mask = false;
+	type10.mask = false;
+	type11.mask = false;
+	type12.mask = false;
+	type13.mask = false;
+	type14.mask = false;
+	type15.mask = false;
+
+	type16.mask = false;
+
+	type0.alpha = 1.0;
+	type1.alpha = 1.0;
+	type2.alpha = 1.0;
+	type3.alpha = 1.0;
+	type4.alpha = 1.0;
+	type5.alpha = 1.0;
+	type6.alpha = 1.0;
+	type7.alpha = 1.0;
+	type8.alpha = 1.0;
+	type9.alpha = 1.0;
+	type10.alpha = 1.0;
+	type11.alpha = 1.0;
+	type12.alpha = 1.0;
+	type13.alpha = 1.0;
+	type14.alpha = 1.0;
+	type15.alpha = 1.0;
+
+	type16.alpha = 0.0;
+
 
 
 /*
@@ -76,7 +158,7 @@ int main(){
 	main_block->draw_line_segment(vec(128,128,192),vec(192,128,128),21); //from +z to +x
 */
 
-/*
+/* the building thing
 	int grass = 7; //VORALDO_STATE_BASIC_GREEN_LEVEL0
 
 	main_block->draw_blockoid(0,256,0,50,0,256,grass);
@@ -93,15 +175,20 @@ int main(){
 	main_block->draw_blockoid(128,256,25,256,128,256, 0);
 */
 
-	main_block->draw_ellipsoid(128,128,128,64,16,16,31);
-	main_block->draw_ellipsoid(128,128,128,16,64,16, 1);
-	main_block->draw_ellipsoid(128,128,128,16,16,64,25);
 
-	main_block->draw_ellipsoid(128,128,128,64,10,10,12);
-	main_block->draw_ellipsoid(128,128,128,10,64,10,18);
-	main_block->draw_ellipsoid(128,128,128,10,10,64,24);
+//cardinal arrows
 
-	main_block->draw_blockoid(100,156,100,156,100,156,0);
+	main_block->draw_ellipsoid(128,128,128,64,16,16,type14); //x shell - 
+	main_block->draw_ellipsoid(128,128,128,16,64,16,type14); //y shell - 
+	main_block->draw_ellipsoid(128,128,128,16,16,64,type14); //z shell - 
+
+	main_block->draw_ellipsoid(128,128,128,64,10,10,type6); //x lobe - 
+	main_block->draw_ellipsoid(128,128,128,10,64,10,type11); //y lobe - 
+	main_block->draw_ellipsoid(128,128,128,10,10,64,type8); //z lobe - 
+
+	main_block->draw_blockoid(100,156,100,156,100,156,type16); //negative space at center
+
+
 	tock = Clock::now();
 
 	cout<< "-----------------" << endl;
